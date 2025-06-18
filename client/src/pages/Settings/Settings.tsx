@@ -1,0 +1,123 @@
+"use client";
+import React from "react";
+import { Users, Badge, UserPlus } from "lucide-react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+} from "@/components/ui/sidebar";
+import ManageUsers from "./ManageUsers";
+import AddUser from "./AddUser";
+
+const data = {
+  nav: [
+    { name: "Manage Users", icon: Users },
+    { name: "Manage Clients", icon: Badge },
+    { name: "My Account", icon: UserPlus },
+  ],
+};
+
+export default function SettingsDialog() {
+  const defaultStack = [data.nav[0].name];
+  const [activeStack, setActiveStack] = React.useState<string[]>(defaultStack);
+
+  function onBreadcrumbClick(selected: string) {
+    const index = activeStack.lastIndexOf(selected);
+    if (index !== -1) {
+      setActiveStack(activeStack.slice(0, index + 1));
+    }
+  }
+
+  return (
+    <SidebarProvider className="items-start">
+      <Sidebar collapsible="none" className="hidden md:flex">
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {data.nav.map((item) => (
+                  <SidebarMenuItem key={item.name}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={item.name == activeStack[0]}
+                      onClick={() => setActiveStack([item.name])}
+                    >
+                      <button type="button" className="flex items-center gap-2">
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.name}</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+
+      <main className="flex h-[480px] flex-1 flex-col overflow-hidden">
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink
+                    onClick={() => setActiveStack(defaultStack)}
+                    className="cursor-pointer"
+                  >
+                    Settings
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                {activeStack.slice(0, -1).map((item, index) => (
+                  <React.Fragment key={index}>
+                    <BreadcrumbItem>
+                      <BreadcrumbLink
+                        onClick={() => onBreadcrumbClick(item)}
+                        className="cursor-pointer"
+                      >
+                        {item}
+                      </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                  </React.Fragment>
+                ))}
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{activeStack.at(-1)}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </header>
+
+        <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0">
+          {activeStack.at(-1) === "Manage Users" && (
+            <ManageUsers
+              activeStack={activeStack}
+              setActiveStack={setActiveStack}
+            />
+          )}
+          {activeStack.at(-1) === "Add User" && (
+            <AddUser
+              activeStack={activeStack}
+              setActiveStack={setActiveStack}
+            />
+          )}
+        </div>
+      </main>
+    </SidebarProvider>
+  );
+}

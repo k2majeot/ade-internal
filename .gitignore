@@ -1,0 +1,37 @@
+# dependencies
+node_modules/
+
+# dotenv / secrets
+.env
+*.pem
+
+# logs
+logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# editor settings
+.vscode/
+.idea/
+
+# test coverage
+coverage/
+.nyc_output/
+
+# build artifacts (if using bundlers)
+dist/
+build/
+
+# local environment
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# optional: remove lock files if you're not using them consistently
+# package-lock.json
+# yarn.lock
