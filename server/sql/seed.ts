@@ -1,5 +1,7 @@
+// seed.ts
+
 import { getPool } from "@/db";
-import { Present } from "@shared/types";
+import { Present, Status } from "@shared/types";
 import { subDays, formatISO } from "date-fns";
 
 const pool = await getPool();
@@ -12,21 +14,33 @@ const dates = [0, 1, 2].map((d) =>
 const rand = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 const log = (msg: string) => console.log("✅", msg);
 
+const statusValues = Object.values(Status) as Status[];
+const presentValues = Object.values(Present) as Present[];
+
 async function seedClients() {
-  await pool.query(
-    `INSERT INTO clients (fname, lname) VALUES
-      ('Alice', 'Anderson'),
-      ('Bob', 'Brown'),
-      ('Charlie', 'Clark'),
-      ('Diana', 'Davis'),
-      ('Ethan', 'Evans'),
-      ('Fiona', 'Frost'),
-      ('George', 'Gibson'),
-      ('Hannah', 'Hughes'),
-      ('Ivan', 'Ingram'),
-      ('Julia', 'Jones')
-     ON CONFLICT DO NOTHING;`
-  );
+  const names = [
+    ["Alice", "Anderson"],
+    ["Bob", "Brown"],
+    ["Charlie", "Clark"],
+    ["Diana", "Davis"],
+    ["Ethan", "Evans"],
+    ["Fiona", "Frost"],
+    ["George", "Gibson"],
+    ["Hannah", "Hughes"],
+    ["Ivan", "Ingram"],
+    ["Julia", "Jones"],
+  ];
+
+  for (const [fname, lname] of names) {
+    const status = rand(statusValues);
+    await pool.query(
+      `INSERT INTO clients (fname, lname, status)
+       VALUES ($1, $2, $3)
+       ON CONFLICT DO NOTHING`,
+      [fname, lname, status]
+    );
+  }
+
   const { rows } = await pool.query("SELECT * FROM clients ORDER BY id");
   log(`Inserted ${rows.length} clients.`);
   return rows.map((r) => r.id);
@@ -94,7 +108,6 @@ async function seedClientRoster() {
 
   let total = 0;
 
-  // Add active clients (end_date is NULL)
   for (const cid of activeCids) {
     await pool.query(
       `INSERT INTO client_roster (cid, start_date, end_date)
@@ -105,7 +118,6 @@ async function seedClientRoster() {
     total++;
   }
 
-  // Add past rostered clients (with end_date)
   for (const [i, cid] of endedCids.entries()) {
     const start = dates[i % dates.length];
     await pool.query(
@@ -126,7 +138,6 @@ async function seedClientRoster() {
 }
 
 async function seedAttendance(rosterMap: Record<string, number[]>) {
-  const statuses: Present[] = ["Here", "Absent", "Not Scheduled"];
   let total = 0;
 
   for (const [date, cids] of Object.entries(rosterMap)) {
@@ -135,7 +146,7 @@ async function seedAttendance(rosterMap: Record<string, number[]>) {
         `INSERT INTO attendance (cid, present, attendance_date)
          VALUES ($1,$2,$3)
          ON CONFLICT (cid, attendance_date) DO NOTHING`,
-        [cid, rand(statuses), date]
+        [cid, rand(presentValues), date]
       );
       total++;
     }
@@ -153,7 +164,6 @@ export async function runSeed() {
   console.log("🌾 Seeding complete.");
 }
 
-// if run directly
 if (import.meta.url === process.argv[1] || import.meta.main) {
   runSeed()
     .catch((err) => {

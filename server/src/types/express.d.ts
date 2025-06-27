@@ -7,6 +7,7 @@ declare global {
       validatedBody?: any;
       validatedQuery?: ParsedQs;
       validatedParams?: any;
+      user?: User;
     }
 
     interface Response {

@@ -1,19 +1,44 @@
-import { createContext, useContext, useState } from "react";
-import { Role } from "@shared/types";
+import { createContext, useContext, useEffect, useState } from "react";
+import type { User } from "@shared/validation";
+import { getSessionUser } from "@/api/auth";
+import type { ApiResponse } from "@/types/apiTypes";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 export const UserContext = createContext<{
-  role: Role | null;
-  setRole: (role: Role | null) => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
+  loading: boolean;
 }>({
-  role: null,
-  setRole: () => {},
+  user: null,
+  setUser: () => {},
+  loading: true,
 });
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-  const [role, setRole] = useState<Role | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  useAuthRedirect();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const result: ApiResponse<User> = await getSessionUser();
+        if (result.success) {
+          setUser(result.data);
+        } else {
+          setUser(null);
+        }
+      } catch (err) {
+        console.error("Session user fetch failed:", err);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   return (
-    <UserContext.Provider value={{ role, setRole }}>
+    <UserContext.Provider value={{ user, setUser, loading }}>
       {children}
     </UserContext.Provider>
   );

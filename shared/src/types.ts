@@ -13,3 +13,8 @@ export enum Present {
   Absent = "Absent",
   NotScheduled = "Not Scheduled",
 }
+
+export enum Status {
+  Active = "Active",
+  Deactivated = "Deactivated",
+}

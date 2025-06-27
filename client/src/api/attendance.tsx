@@ -1,36 +1,42 @@
-import { fetchWithResponse, fetchNoResponse } from "@/lib/validation";
+import { fetchHandler } from "@/lib/fetchHandler";
+
+import type {
+  AttendanceQuery,
+  AttendanceList,
+  AttendanceUpsert,
+} from "@shared/validation";
 import {
-  type AttendanceQuery,
   attendanceQuerySchema,
-  type AttendanceList,
   attendanceListSchema,
-  type AttendanceUpsert,
   attendanceUpsertSchema,
 } from "@shared/validation";
+
 import {
   getAttendanceService,
   upsertAttendanceService,
 } from "@/services/attendanceService";
 
+import type { ApiResult } from "@/types/apiTypes";
+
 export async function getAttendance(
   query: AttendanceQuery
 ): Promise<ApiResult<AttendanceList>> {
-  const result: ApiResult<AttendanceList> = fetchWithResponse(
-    getAttendanceService,
-    query,
-    attendanceQuerySchema,
-    attendanceListSchema
-  );
+  const result = await fetchHandler({
+    service: getAttendanceService,
+    payload: { query },
+    payloadSchemas: { query: attendanceQuerySchema },
+    outputSchema: attendanceListSchema,
+  });
   return result;
 }
 
 export async function upsertAttendance(
   list: AttendanceUpsert
 ): Promise<ApiResult<undefined>> {
-  const result: ApiResult<undefined> = fetchNoResponse(
-    upsertAttendanceService,
-    list,
-    attendanceUpsertSchema
-  );
+  const result = await fetchHandler({
+    service: upsertAttendanceService,
+    payload: { body: list },
+    payloadSchemas: { body: attendanceUpsertSchema },
+  });
   return result;
 }

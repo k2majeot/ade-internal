@@ -1,11 +1,16 @@
 import { getPool } from "@/db";
 
-const pool = await getPool();
+async function clearAllSessions() {
+  const pool = await getPool();
 
-const result = await pool.query(
-  "TRUNCATE TABLE users RESTART IDENTITY CASCADE;"
-);
-console.log("📋 Table:");
-console.table(result.rows);
+  try {
+    await pool.query(`DELETE FROM session`);
+    console.log("🧹 All sessions cleared");
+  } catch (err: any) {
+    console.error("❌ Error clearing sessions:", err.message);
+  } finally {
+    await pool.end();
+  }
+}
 
-await pool.end();
+clearAllSessions();

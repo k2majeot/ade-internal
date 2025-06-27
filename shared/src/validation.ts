@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { Role, Present } from "./types";
+import { Role, Present, Status } from "./types";
 import { format } from "date-fns";
 
 const _ = {
-  serialId: z.number().int().positive(),
+  serialId: z.coerce.number().int().positive(),
   date: z.preprocess((val) => {
     if (typeof val === "string" || val instanceof Date) {
       const parsed = new Date(val);
@@ -39,10 +39,24 @@ const _ = {
     errorMap: () => ({ message: "Role is required" }),
   }),
   present: z.nativeEnum(Present),
+  status: z.nativeEnum(Status, {
+    errorMap: () => ({ message: "Status is required" }),
+  }),
 } as const;
 
 export const serialIdSchema = _.serialId;
 export type SerialId = z.infer<typeof serialIdSchema>;
+
+export const serialIdListSchema = z.object({ ids: z.array(_.serialId) });
+export type SerialIdList = z.infer<typeof serialIdListSchema>;
+
+export const deleteUsersSchema = z.array(
+  z.object({
+    id: _.serialId,
+    username: _.username,
+  })
+);
+export type DeleteUsers = z.infer<typeof deleteUsersSchema>;
 
 export const credentialsSchema = z.object({
   username: _.username,
@@ -50,10 +64,19 @@ export const credentialsSchema = z.object({
 });
 export type Credentials = z.infer<typeof credentialsSchema>;
 
-export const loginResultSchema = z.object({
-  role: _.role,
+const challengeSchema = z.object({
+  challenge: z.string(),
+  session: z.string(),
+  username: _.username,
 });
-export type LoginResult = z.infer<typeof loginResultSchema>;
+type Challenge = z.infer<typeof challengeSchema>;
+
+export const completeChallengeSchema = z.object({
+  username: _.username,
+  newPassword: _.password,
+  session: z.string(),
+});
+export type CompleteChallenge = z.infer<typeof completeChallengeSchema>;
 
 export const userSchema = z.object({
   id: _.serialId,
@@ -61,14 +84,33 @@ export const userSchema = z.object({
   lname: _.lname,
   username: _.username,
   role: _.role,
+  status: _.status,
 });
 export type User = z.infer<typeof userSchema>;
+
+export const loginResultSchema = userSchema.or(challengeSchema);
+export type LoginResult = z.infer<typeof loginResultSchema>;
 
 export const userDataSchema = userSchema.omit({ id: true });
 export type UserData = z.infer<typeof userDataSchema>;
 
 export const userListSchema = z.array(userSchema);
 export type UserList = z.infer<typeof userListSchema>;
+
+export const clientSchema = z.object({
+  id: _.serialId,
+  fname: _.fname,
+  lname: _.lname,
+  status: _.status,
+});
+
+export type Client = z.infer<typeof clientSchema>;
+
+export const clientDataSchema = clientSchema.omit({ id: true });
+export type ClientData = z.infer<typeof clientDataSchema>;
+
+export const clientListSchema = z.array(clientSchema);
+export type ClientList = z.infer<typeof clientListSchema>;
 
 export const attendanceQuerySchema = z.object({
   date: _.date,

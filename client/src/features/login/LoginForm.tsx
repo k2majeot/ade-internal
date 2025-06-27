@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GalleryVerticalEnd } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import {
   Form,
@@ -14,24 +15,36 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
-import type { LoginResult } from "@shared/validation";
+import type { Credentials, LoginResult } from "@shared/validation";
+import { credentialsSchema } from "@shared/validation";
+import { isChallenge } from "@shared/utils";
 import type { ApiResult } from "@/types/apiTypes";
 import { login } from "@/api/auth";
+import { useUser } from "@/context/UserContext";
+import Logo from "@/assets/logo.svg?react";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const { setUser } = useUser();
+  const navigate = useNavigate();
   const form = useForm<Credentials>({
     resolver: zodResolver(credentialsSchema),
     defaultValues: { username: "", password: "" },
   });
 
   async function onSubmit(creds: Credentials) {
-    const result: ApiResponse<LoginResult> = await login(creds);
+    const result: ApiResponse<User> = await login(creds);
     if (!result.success) {
       return;
     }
+    if (isChallenge(result.data)) {
+      navigate("/challenge", { state: result.data });
+      return;
+    }
+    setUser(result.data);
+    navigate("/");
   }
 
   return (
@@ -44,8 +57,8 @@ export function LoginForm({
                 href="#"
                 className="flex flex-col items-center gap-2 font-medium"
               >
-                <div className="flex size-8 items-center justify-center rounded-md">
-                  <GalleryVerticalEnd className="size-6" />
+                <div className="flex size-12 items-center justify-center rounded-md">
+                  <Logo />
                 </div>
                 <span className="sr-only">ADE Inc.</span>
               </a>

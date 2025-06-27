@@ -1,6 +1,7 @@
-"use client";
-import React from "react";
-import { Users, Badge, UserPlus } from "lucide-react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Users, Badge, UserPlus, LogOut } from "lucide-react";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,8 +20,13 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
+
+import type { User, Client } from "@shared/validation";
+import { logout } from "@/api/auth";
 import ManageUsers from "./ManageUsers";
-import AddUser from "./AddUser";
+import ManageUser from "./ManageUser";
+import ManageClients from "./ManageClients";
+import ManageClient from "./ManageClient";
 
 const data = {
   nav: [
@@ -31,8 +37,11 @@ const data = {
 };
 
 export default function SettingsDialog() {
+  const navigate = useNavigate();
   const defaultStack = [data.nav[0].name];
-  const [activeStack, setActiveStack] = React.useState<string[]>(defaultStack);
+  const [activeStack, setActiveStack] = useState<string[]>(defaultStack);
+  const [user, setUser] = useState<User | null>(null);
+  const [client, setClient] = useState<Client | null>(null);
 
   function onBreadcrumbClick(selected: string) {
     const index = activeStack.lastIndexOf(selected);
@@ -52,16 +61,35 @@ export default function SettingsDialog() {
                   <SidebarMenuItem key={item.name}>
                     <SidebarMenuButton
                       asChild
-                      isActive={item.name == activeStack[0]}
+                      isActive={item.name === activeStack[0]}
                       onClick={() => setActiveStack([item.name])}
                     >
-                      <button type="button" className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
                         <item.icon className="h-4 w-4" />
                         <span>{item.name}</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
+                <div className="border-t my-2" />
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await logout();
+                        navigate("/login");
+                      }}
+                      className="flex items-center gap-2 text-red-500 cursor-pointer"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Logout</span>
+                    </button>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -69,7 +97,7 @@ export default function SettingsDialog() {
       </Sidebar>
 
       <main className="flex h-[480px] flex-1 flex-col overflow-hidden">
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+        <header className="flex h-16 shrink-0 items-center gap-2">
           <div className="flex items-center gap-2 px-4">
             <Breadcrumb>
               <BreadcrumbList>
@@ -108,11 +136,34 @@ export default function SettingsDialog() {
             <ManageUsers
               activeStack={activeStack}
               setActiveStack={setActiveStack}
+              setUser={setUser}
             />
           )}
-          {activeStack.at(-1) === "Add User" && (
-            <AddUser
+          {activeStack.at(-1) === "Create User" && (
+            <ManageUser type="create" setActiveStack={setActiveStack} />
+          )}
+          {activeStack.at(-1) === "Update User" && user && (
+            <ManageUser
+              type="update"
+              user={user}
+              setActiveStack={setActiveStack}
+            />
+          )}
+
+          {activeStack.at(-1) === "Manage Clients" && (
+            <ManageClients
               activeStack={activeStack}
+              setActiveStack={setActiveStack}
+              setClient={setClient}
+            />
+          )}
+          {activeStack.at(-1) === "Create Client" && (
+            <ManageClient type="create" setActiveStack={setActiveStack} />
+          )}
+          {activeStack.at(-1) === "Update Client" && client && (
+            <ManageClient
+              type="update"
+              client={client}
               setActiveStack={setActiveStack}
             />
           )}

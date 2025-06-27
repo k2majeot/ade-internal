@@ -1,13 +1,17 @@
+import { getPool } from "@/db";
+import connectPgSimple from "connect-pg-simple";
 import express from "express";
 import session from "express-session";
 import cors from "cors";
-import cookieParser from "cookie-parser";
 import router from "@/routes";
 import {
   responseHandler,
   errorHandler,
 } from "@/middleware/response.middleware";
 import config from "@/config";
+
+const pool = await getPool();
+const PgSession = connectPgSimple(session);
 
 const app = express();
 app.use(
@@ -17,12 +21,21 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(cookieParser());
 app.use(
   session({
+    store: new PgSession({
+      pool: pool,
+      tableName: "session",
+      pruneSessionInterval: 86400,
+    }),
     secret: config.session.secret,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      maxAge: config.session.duration,
+      secure: false,
+      httpOnly: true,
+    },
   })
 );
 

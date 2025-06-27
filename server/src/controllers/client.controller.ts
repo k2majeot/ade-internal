@@ -1,10 +1,23 @@
-import { getUsersService } from "@/services/user.service";
-import { type UsersList } from "@shared/types";
-import { type ServiceResponse } from "@/types/server.types";
+import {
+  getClientService,
+  getClientsService,
+  updateClientService,
+  createClientService,
+} from "@/services/client.service";
+
+import type {
+  SerialId,
+  Client,
+  ClientList,
+  ClientData,
+} from "@shared/validation";
+import type { ServiceResponse } from "@/types/server.types";
 import { isServiceSuccess } from "@/utils/controller.util";
 
-export async function getAttendance(req, res) {
-  const serviceResponse: ServiceResponse<UsersList> = await getUsersService();
+export async function getClient(req, res) {
+  const { id }: SerialId = req.validatedParams;
+  const serviceResponse: ServiceResponse<Client> = await getClientService(id);
+
   if (!isServiceSuccess(serviceResponse)) {
     return res.fail({
       status: serviceResponse.status,
@@ -12,8 +25,65 @@ export async function getAttendance(req, res) {
       message: serviceResponse.message,
     });
   }
+
   return res.success({
+    status: serviceResponse.status,
     data: serviceResponse.data,
     message: serviceResponse.message,
   });
+}
+
+export async function getClients(req, res) {
+  const serviceResponse: ServiceResponse<ClientList> =
+    await getClientsService();
+
+  if (!isServiceSuccess(serviceResponse)) {
+    return res.fail({
+      status: serviceResponse.status,
+      errors: serviceResponse.errors,
+      message: serviceResponse.message,
+    });
+  }
+
+  return res.success({
+    status: serviceResponse.status,
+    data: serviceResponse.data,
+    message: serviceResponse.message,
+  });
+}
+
+export async function updateClient(req, res) {
+  const { id }: SerialId = req.validatedParams;
+  const clientData: ClientData = req.validatedBody;
+  const serviceResponse: ServiceResponse<undefined> = await updateClientService(
+    id,
+    clientData
+  );
+
+  if (!isServiceSuccess(serviceResponse)) {
+    return res.fail({
+      status: serviceResponse.status,
+      errors: serviceResponse.errors,
+      message: serviceResponse.message,
+    });
+  }
+
+  return res.status(serviceResponse.status).end();
+}
+
+export async function createClient(req, res) {
+  const clientData: ClientData = req.validatedBody;
+  const serviceResponse: ServiceResponse<undefined> = await createClientService(
+    clientData
+  );
+
+  if (!isServiceSuccess(serviceResponse)) {
+    return res.fail({
+      status: serviceResponse.status,
+      errors: serviceResponse.errors,
+      message: serviceResponse.message,
+    });
+  }
+
+  return res.status(serviceResponse.status).end();
 }

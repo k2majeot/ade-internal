@@ -1,20 +1,107 @@
-import { getPool } from "../db";
+import { getPool } from "@/db";
+import type {
+  Client,
+  ClientData,
+  ClientList,
+  SerialId,
+} from "@shared/validation";
+import type { ServiceResponse } from "@/types/server.types";
+import { createSuccess, createFail } from "@/utils/service.util";
 
-export async function getClientsService(name?: string) {
-  let query = `
-    SELECT id AS cid, name
+export async function getClientService(
+  id: SerialId
+): Promise<ServiceResponse<Client>> {
+  const pool = await getPool();
+
+  const query = `
+    SELECT id, fname, lname, status
     FROM clients
+    WHERE id = $1
   `;
-  const params: any[] = [];
+  const result = await pool.query(query, [id]);
 
-  if (name) {
-    query += ` WHERE name ILIKE $1`;
-    params.push(`%${name}%`);
+  const client = result.rows[0];
+
+  if (!client) {
+    return createFail({ status: 404, message: "Client not found" });
   }
 
-  query += ` ORDER BY name`;
+  return createSuccess({ data: client });
+}
 
+export async function getClientsService(): Promise<
+  ServiceResponse<ClientList>
+> {
   const pool = await getPool();
-  const result = await pool.query(query, params);
-  return result.rows ?? [];
+
+  const query = `
+    SELECT id, fname, lname, status
+    FROM clients
+  `;
+  const result = await pool.query(query);
+
+  const clientList: ClientList = result.rows ?? [];
+  return createSuccess({ data: clientList });
+}
+
+export async function updateClientService(
+  id: SerialId,
+  { fname, lname, status }: ClientData
+): Promise<ServiceResponse<undefined>> {
+  const pool = await getPool();
+
+  const result = await pool.query(
+    `UPDATE clients
+     SET fname = $1, lname = $2, status = $3
+     WHERE id = $4`,
+    [fname, lname, status, id]
+  );
+
+  if (result.rowCount === 0) {
+    return createFail({ status: 404, message: "Client not found" });
+  }
+
+  return createSuccess({ status: 204 });
+}
+
+export async function createClientService({
+  fname,
+  lname,
+  status,
+}: ClientData): Promise<ServiceResponse<undefined>> {
+  const pool = await getPool();
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    const insertClientResult = await client.query(
+      `INSERT INTO clients (fname, lname, status)
+       VALUES ($1, $2, $3)
+       RETURNING id`,
+      [fname, lname, status]
+    );
+
+    const cid = insertClientResult.rows[0]?.id;
+    if (!cid) {
+      throw new Error("Failed to retrieve new client ID.");
+    }
+
+    await client.query(
+      `INSERT INTO client_roster (cid, start_date)
+       VALUES ($1, CURRENT_DATE)`,
+      [cid]
+    );
+
+    await client.query("COMMIT");
+    return createSuccess({ status: 201 });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    return createFail({
+      status: 500,
+      message: "Failed to create client and roster",
+    });
+  } finally {
+    client.release();
+  }
 }

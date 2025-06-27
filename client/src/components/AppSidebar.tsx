@@ -1,6 +1,5 @@
-"use client";
-
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { useTheme } from "next-themes";
 import { Link } from "react-router-dom";
 import {
   Calendar,
@@ -12,6 +11,7 @@ import {
 
 import {
   Sidebar,
+  SidebarHeader,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
@@ -21,7 +21,6 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-
 import {
   Dialog,
   DialogTrigger,
@@ -29,8 +28,14 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
-import SettingsDialog from "@/pages/Settings/Settings"; // ⬅️ full component with trigger removed
+import { useUser } from "@/context/UserContext";
+import NavUser from "@/components/NavUser";
+import SideSwitcher from "@/components/SideSwitcher";
+import SettingsDialog from "@/features/settings/SettingsDialog";
+import Logo from "@/assets/logo.svg?react";
 
 const items = [
   { title: "Home", url: "/", icon: Home },
@@ -40,13 +45,22 @@ const items = [
 
 export function AppSidebar() {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const { resolvedTheme, setTheme } = useTheme();
+  const { user } = useUser();
+
+  const sides = [
+    { name: "ADE", logo: Logo, role: user.role },
+    { name: "ADE Too!", logo: Logo, role: user.role },
+  ];
 
   return (
     <>
       <Sidebar>
+        <SidebarHeader>
+          <SideSwitcher sides={sides} />
+        </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Adult Day Experiences</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {items.map((item) => (
@@ -59,20 +73,19 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
-
-                {/* Settings: dialog-triggering row */}
                 <SidebarMenuItem>
                   <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
                     <DialogTrigger asChild>
-                      <SidebarMenuButton>
-                        <div className="flex items-center gap-2">
+                      <SidebarMenuButton asChild>
+                        <button
+                          type="button"
+                          className="flex items-center gap-2 cursor-pointer"
+                        >
                           <SettingsIcon className="h-4 w-4" />
                           <span>Settings</span>
-                        </div>
+                        </button>
                       </SidebarMenuButton>
                     </DialogTrigger>
-
-                    {/* SettingsDialog must exclude <Dialog> wrapper and be content only */}
                     <DialogContent className="overflow-hidden p-0 md:max-h-[500px] md:max-w-[700px] lg:max-w-[800px]">
                       <DialogTitle className="sr-only">Settings</DialogTitle>
                       <DialogDescription className="sr-only">
@@ -86,6 +99,9 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
+        <SidebarFooter>
+          <NavUser user={user} />
+        </SidebarFooter>
       </Sidebar>
     </>
   );

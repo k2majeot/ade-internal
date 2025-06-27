@@ -1,13 +1,14 @@
 import {
   CognitoIdentityProviderClient,
   InitiateAuthCommand,
+  RespondToAuthChallengeCommand,
   AdminCreateUserCommand,
   AdminAddUserToGroupCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 
 import { getPool } from "@/db";
 import config from "@/config";
-import { Role } from "@shared/types";
+import { Status } from "@shared/types";
 import type { Credentials, AuthResult, UserData } from "@shared/validation";
 import { createUserService } from "@/services/user.service";
 import { type ServiceResponse } from "@/types/server.types";
@@ -26,7 +27,7 @@ async function decodeJwtPayload(token: string): any {
 export async function loginService({
   username,
   password,
-}: Credentials): Promise<ServiceResponse<AuthResult>> {
+}: Credentials): Promise<ServiceResponse<LoginResult>> {
   const input = {
     AuthFlow: "USER_PASSWORD_AUTH" as const,
     ClientId: config.cognito.clientId,
@@ -37,30 +38,87 @@ export async function loginService({
   };
 
   const command = new InitiateAuthCommand(input);
+  let response;
+  try {
+    response = await cognitoClient.send(command);
+  } catch (err: any) {
+    if (err.name === "NotAuthorizedException") {
+      return createFail({
+        status: 401,
+        message: "Incorrect username or password",
+      });
+    }
+    return createFail({
+      status: 500,
+      message: "Authentication failed",
+      errors: [err.message],
+    });
+  }
+
+  if (response.ChallengeName) {
+    return createSuccess({
+      data: {
+        challenge: response.ChallengeName,
+        session: response.Session,
+        username,
+      },
+    });
+  }
+
+  const idToken = response.AuthenticationResult?.IdToken;
+
+  const pool = await getPool();
+  const result = await pool.query(
+    `
+      SELECT id, fname, lname, username, role, status
+      FROM users
+      WHERE username = $1
+    `,
+    [username]
+  );
+
+  const user = result.rows[0];
+
+  if (!user) {
+    return createFail({ status: 404, message: "User not found" });
+  }
+
+  if (user.status == Status.Deactivated) {
+    return createFail({ status: 403, message: "User deactivated" });
+  }
+
+  return createSuccess({ data: user });
+}
+
+export async function completeChallengeService(
+  data: CompleteChallenge
+): Promise<ServiceResponse<undefined>> {
+  const { username, newPassword, session } = data;
+
+  const command = new RespondToAuthChallengeCommand({
+    ClientId: config.cognito.clientId,
+    ChallengeName: "NEW_PASSWORD_REQUIRED",
+    Session: session,
+    ChallengeResponses: {
+      USERNAME: username,
+      NEW_PASSWORD: newPassword,
+    },
+  });
+
   const response = await cognitoClient.send(command);
 
   const idToken = response.AuthenticationResult?.IdToken;
   if (!idToken) {
-    return createFail({ status: 401, message: "Invalid credentials" });
+    return createFail({ status: 401, message: "Password challenge failed" });
   }
 
-  const payload = await decodeJwtPayload(idToken);
-  const groups = payload["cognito:groups"];
-
-  return createSuccess({
-    data: {
-      role:
-        Array.isArray(groups) && groups.includes("Admin")
-          ? Role.Admin
-          : Role.User,
-    },
-  });
+  return createSuccess({ status: 204 });
 }
 
 export async function registerService(
   userData: UserData
 ): Promise<ServiceResponse<undefined>> {
-  const { username, fname, lname, role } = userData;
+  const { username, fname, lname, role, status } = userData;
   const pool = await getPool();
   const client = await pool.connect();
 
@@ -68,9 +126,9 @@ export async function registerService(
     await client.query("BEGIN");
 
     await client.query(
-      `INSERT INTO users (username, fname, lname, role)
-       VALUES ($1, $2, $3, $4)`,
-      [username, fname, lname, role]
+      `INSERT INTO users (username, fname, lname, role, status)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [username, fname, lname, role, status]
     );
 
     const createCommand = new AdminCreateUserCommand({
@@ -78,6 +136,16 @@ export async function registerService(
       Username: username,
       TemporaryPassword: config.cognito.tempPassword,
       MessageAction: "SUPPRESS",
+      UserAttributes: [
+        {
+          Name: "email",
+          Value: `${username}@placeholder.com`,
+        },
+        {
+          Name: "email_verified",
+          Value: "true",
+        },
+      ],
     });
 
     const createResponse = await cognitoClient.send(createCommand);

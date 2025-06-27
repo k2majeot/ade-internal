@@ -1,6 +1,6 @@
 // create-tables.ts – schema using enums for CHECK constraints
 import { getPool } from "@/db";
-import { Present, Role } from "@shared/types";
+import { Present, Role, Status } from "@shared/types";
 
 const pool = await getPool();
 
@@ -14,12 +14,14 @@ function enumCheck(column: string, values: string[]): string {
 
 const presentCheck = enumCheck("present", Object.values(Present));
 const roleCheck = enumCheck("role", Object.values(Role));
+const statusCheck = enumCheck("status", Object.values(Status));
 
 await pool.query(`
   CREATE TABLE IF NOT EXISTS clients (
     id SERIAL PRIMARY KEY,
     fname TEXT NOT NULL,
-    lname TEXT NOT NULL
+    lname TEXT NOT NULL,
+    status TEXT NOT NULL ${statusCheck}
   );
 
   CREATE TABLE IF NOT EXISTS users (
@@ -27,7 +29,8 @@ await pool.query(`
     fname TEXT NOT NULL,
     lname TEXT NOT NULL,
     username TEXT NOT NULL UNIQUE,
-    role TEXT NOT NULL ${roleCheck}
+    role TEXT NOT NULL ${roleCheck},
+    status TEXT NOT NULL ${statusCheck}
   );
 
   CREATE TABLE IF NOT EXISTS goals (
@@ -66,6 +69,12 @@ await pool.query(`
     prompt_level TEXT,
     initial TEXT,
     UNIQUE (gid, goal_data_date)
+  );
+
+  CREATE TABLE IF NOT EXISTS session (
+    sid VARCHAR PRIMARY KEY,
+    sess JSONB NOT NULL,
+    expire TIMESTAMP NOT NULL
   );
 `);
 
