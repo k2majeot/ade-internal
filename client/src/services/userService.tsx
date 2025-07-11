@@ -4,7 +4,7 @@ import type { UserData, User, SerialId, DeleteUsers } from "@shared/validation";
 export async function getUserService({
   params: { id },
 }: RequestPayload<undefined, undefined, { id: SerialId }>): Promise<Response> {
-  return fetch(`/api/user/${id}`);
+  return fetch(`/api/users/${id}`);
 }
 
 export async function getUsersService(): Promise<Response> {
@@ -15,7 +15,7 @@ export async function updateUserService({
   params: { id },
   body,
 }: RequestPayload<UserData, undefined, { id: SerialId }>): Promise<Response> {
-  return fetch(`/api/user/${id}`, {
+  return fetch(`/api/users/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

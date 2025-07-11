@@ -3,6 +3,7 @@ import { startOfToday, format, parse } from "date-fns";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 
+import { useSide } from "@/context/SideContext";
 import { getAttendance, upsertAttendance } from "@/api/attendance";
 import type {
   AttendanceQuery,
@@ -26,6 +27,7 @@ export default function Attendance() {
   const [search, setSearch] = useState("");
   const [attendance, setAttendance] = useState<AttendanceUi[]>([]);
   const [edit, setEdit] = useState(false);
+  const { side } = useSide();
 
   const filteredAttendance = useMemo(() => {
     return attendance.filter((entry) => {
@@ -35,7 +37,7 @@ export default function Attendance() {
   }, [attendance, search]);
 
   const fetchAttendance = async () => {
-    const query: AttendanceQuery = { date };
+    const query: AttendanceQuery = { date, side };
     const result: ApiResult<AttendanceList> = await getAttendance(query);
     if (!result.success) {
       setAttendance([]);
@@ -59,7 +61,7 @@ export default function Attendance() {
       format(date, "yyyy-MM-dd") === format(startOfToday(), "yyyy-MM-dd")
     );
     void fetchAttendance();
-  }, [date]);
+  }, [date, side]);
 
   const onPresentChange = (cid: number, val: Present) => {
     setAttendance((prev) =>

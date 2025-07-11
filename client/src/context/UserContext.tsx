@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import type { User } from "@shared/validation";
 import { getSessionUser } from "@/api/auth";
 import type { ApiResponse } from "@/types/apiTypes";
-import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { useAuth } from "@/hooks/useAuth";
 
 export const UserContext = createContext<{
   user: User | null;
@@ -17,7 +17,6 @@ export const UserContext = createContext<{
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  useAuthRedirect();
 
   useEffect(() => {
     (async () => {
@@ -36,6 +35,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       }
     })();
   }, []);
+
+  useAuth();
 
   return (
     <UserContext.Provider value={{ user, setUser, loading }}>

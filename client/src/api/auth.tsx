@@ -5,6 +5,7 @@ import type {
   UserData,
   CompleteChallenge,
   User,
+  Username,
 } from "@shared/validation";
 import {
   credentialsSchema,
@@ -12,6 +13,7 @@ import {
   userDataSchema,
   completeChallengeSchema,
   userSchema,
+  usernameSchema,
 } from "@shared/validation";
 import {
   loginService,
@@ -19,6 +21,7 @@ import {
   registerService,
   completeChallengeService,
   getSessionUserService,
+  resetPasswordService,
 } from "@/services/authService";
 import type { ApiResult } from "@/types/apiTypes";
 
@@ -67,6 +70,17 @@ export async function getSessionUser(): Promise<ApiResult<User>> {
   const result = await fetchHandler({
     service: getSessionUserService,
     outputSchema: userSchema,
+  });
+  return result;
+}
+
+export async function resetPassword(
+  username: Username
+): Promise<ApiResult<undefined>> {
+  const result = await fetchHandler({
+    service: resetPasswordService,
+    payload: { body: { username } },
+    payloadSchemas: { body: usernameSchema },
   });
   return result;
 }

@@ -2,7 +2,7 @@
 node_modules/
 
 # dotenv / secrets
-.env
+.env*
 *.pem
 
 # logs

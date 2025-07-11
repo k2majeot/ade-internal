@@ -108,7 +108,7 @@ export default function ChallengeForm({
               )}
             />
 
-            <Button type="submit" className="w-full mt-4">
+            <Button type="submit" className="w-full mt-4 cursor-pointer">
               Submit
             </Button>
           </div>

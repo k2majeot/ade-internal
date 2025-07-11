@@ -1,16 +1,15 @@
 import { getPool } from "@/db";
 
-async function clearAllSessions() {
-  const pool = await getPool();
+const pool = await getPool();
 
+(async () => {
   try {
-    await pool.query(`DELETE FROM session`);
-    console.log("🧹 All sessions cleared");
+    const result = await pool.query(`SELECT * FROM users;`);
+    console.log("👥 Users:");
+    console.table(result.rows);
   } catch (err: any) {
-    console.error("❌ Error clearing sessions:", err.message);
+    console.error("❌ Failed to query users:", err.message);
   } finally {
     await pool.end();
   }
-}
-
-clearAllSessions();
+})();

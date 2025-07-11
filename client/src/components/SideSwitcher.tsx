@@ -1,12 +1,11 @@
 import * as React from "react";
-import { ChevronsUpDown, Plus } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -17,21 +16,24 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-export default function SideSwitcher({
-  sides,
-}: {
-  sides: {
-    name: string;
-    logo: React.ElementType;
-    role: string;
-  }[];
-}) {
-  const { isMobile } = useSidebar();
-  const [activeSide, setActiveSide] = React.useState(sides[0]);
+import { useSide } from "@/context/SideContext";
+import { Side as SideEnum } from "@shared/types";
 
-  if (!activeSide) {
-    return null;
-  }
+type SideInfo = {
+  name: string;
+  logo: React.ElementType;
+  role: string;
+  value: Side;
+  disabled?: boolean;
+};
+
+export default function SideSwitcher({ sides }: { sides: SideInfo[] }) {
+  const { isMobile } = useSidebar();
+  const { side, setSide } = useSide();
+
+  const activeSide = sides.find((s) => s.value === side);
+
+  if (!activeSide) return null;
 
   return (
     <SidebarMenu>
@@ -61,16 +63,17 @@ export default function SideSwitcher({
             <DropdownMenuLabel className="text-muted-foreground text-xs">
               Sides
             </DropdownMenuLabel>
-            {sides.map((side, index) => (
+            {sides.map((sideOption, index) => (
               <DropdownMenuItem
-                key={side.name}
-                onClick={() => setActiveSide(side)}
+                key={sideOption.name}
+                onClick={() => setSide(sideOption.value)}
+                disabled={sideOption.disabled}
                 className="gap-2 p-2 cursor-pointer"
               >
                 <div className="flex size-6 items-center justify-center rounded-md border">
-                  <side.logo className="shrink-0" />
+                  <sideOption.logo className="shrink-0" />
                 </div>
-                {side.name}
+                {sideOption.name}
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>
             ))}

@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
+import { Loader2 } from "lucide-react";
 
 import {
   Form,
@@ -45,6 +47,7 @@ type Props<T extends ZodSchema> = {
     label: string;
     onSubmit: (values: z.infer<T>) => void;
   };
+  loading: boolean;
   defaultValues?: z.infer<T>;
 };
 
@@ -52,6 +55,7 @@ export default function GenericForm<T extends ZodSchema>({
   formSchema,
   fields,
   submitButton,
+  loading,
   defaultValues,
 }: Props<T>) {
   const form = useForm<z.infer<T>>({
@@ -105,7 +109,10 @@ export default function GenericForm<T extends ZodSchema>({
             )}
           />
         ))}
-        <Button type="submit">{submitButton.label}</Button>
+        <Button className="cursor-pointer" disabled={loading}>
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {submitButton.label}
+        </Button>
       </form>
     </Form>
   );

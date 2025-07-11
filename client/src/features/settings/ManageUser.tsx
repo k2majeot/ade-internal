@@ -1,12 +1,14 @@
 import { z } from "zod";
+import { useState } from "react";
 import GenericForm, { type Field } from "@/components/GenericForm";
 import { updateUser } from "@/api/user";
 import { register } from "@/api/auth";
-import { Role, Status } from "@shared/types";
+import { Role, Status, Side } from "@shared/types";
 import type { ApiResponse } from "@/types/apiTypes";
 import { userDataSchema } from "@shared/validation";
 import type { User } from "@/types";
 import { toast } from "sonner";
+import { emptyDefaults } from "@/lib/utils";
 
 const userFields: Field[] = [
   {
@@ -26,6 +28,16 @@ const userFields: Field[] = [
     name: "username",
     type: "input",
     placeholder: "Choose a username",
+  },
+  {
+    label: "Side",
+    name: "side",
+    type: "select",
+    placeholder: "Select a side",
+    options: Object.values(Side).map((side) => ({
+      label: side,
+      value: side,
+    })),
   },
   {
     label: "Role",
@@ -69,12 +81,15 @@ export default function ManageUser(props: Props) {
   const fields: Field[] = userFields.map((f) =>
     f.name === "username" ? { ...f, disabled: type === "update" } : f
   );
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (values: z.infer<typeof userDataSchema>) => {
+    setLoading(true);
     const result =
       type === "update"
         ? await updateUser(props.user.id, values)
         : await register(values);
+    setLoading(false);
 
     if (!result.success) {
       toast.error(result.message || "Submission failed");
@@ -93,7 +108,8 @@ export default function ManageUser(props: Props) {
         label: type === "update" ? "Update User" : "Create User",
         onSubmit: onSubmit,
       }}
-      defaultValues={type === "update" ? props.user : {}}
+      defaultValues={props.user ?? emptyDefaults(userDataSchema)}
+      loading={loading}
     />
   );
 }

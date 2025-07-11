@@ -1,10 +1,12 @@
 import { z } from "zod";
+import { useState } from "react";
 import GenericForm, { type Field } from "@/components/GenericForm";
 import { createClient, updateClient } from "@/api/client";
-import { Status } from "@shared/types";
+import { Status, Side } from "@shared/types";
 import { clientDataSchema } from "@shared/validation";
 import type { Client } from "@/types";
 import { toast } from "sonner";
+import { emptyDefaults } from "@/lib/utils";
 
 const clientFields: Field[] = [
   {
@@ -18,6 +20,16 @@ const clientFields: Field[] = [
     label: "Last Name",
     type: "input",
     placeholder: "Enter last name",
+  },
+  {
+    name: "side",
+    label: "Side",
+    type: "select",
+    placeholder: "Select a side",
+    options: Object.values(Side).map((side) => ({
+      label: side,
+      value: side,
+    })),
   },
   {
     name: "status",
@@ -47,11 +59,14 @@ type Props = CreateProps | UpdateProps;
 
 export default function ManageClient(props: Props) {
   const { setActiveStack, client } = props;
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (values: z.infer<typeof clientDataSchema>) => {
+    setLoading(true);
     const result = client
       ? await updateClient(client.id, values)
       : await createClient(values);
+    setLoading(false);
 
     if (!result.success) {
       toast.error(result.message || "Submission failed");
@@ -66,11 +81,12 @@ export default function ManageClient(props: Props) {
     <GenericForm
       formSchema={clientDataSchema}
       fields={clientFields}
-      defaultValues={client ?? {}}
+      defaultValues={props.client ?? emptyDefaults(clientDataSchema)}
       submitButton={{
         label: client ? "Update Client" : "Create Client",
         onSubmit,
       }}
+      loading={loading}
     />
   );
 }

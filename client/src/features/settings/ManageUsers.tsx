@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { ManageTable } from "@/components/ManageTable";
 import { getUsers, deactivateUsers, deleteUsers } from "@/api/user";
-import type { User, UserList } from "@shared/validation";
+import { resetPassword } from "@/api/auth";
+import type { User, UserList, DeleteUsers } from "@shared/validation";
 import type { ApiResponse } from "@/types/apiTypes";
+import { withToast } from "@/lib/utils";
 
 const columns = [
   { label: "First Name", key: "fname" },
   { label: "Last Name", key: "lname" },
   { label: "Username", key: "username" },
+  { label: "Side", key: "side" },
   { label: "Role", key: "role" },
-  { label: "Status", key: "status" },
 ];
 
 type Props = {
@@ -60,25 +62,50 @@ export default function ManageUsers({
         },
       },
       {
-        label: selectedCount === 1 ? "Deactivate User" : "Deactivate Users",
-        disabled: selectedCount === 0,
+        label: "Reset Password",
+        disabled: selectedCount !== 1,
         onClick: async () => {
-          const ids = selectedArray.map((u) => u.id);
-          await deactivateUsers(ids);
-          await fetchUsers();
+          await withToast(
+            () => resetPassword(selectedArray[0].username),
+            "Password reset",
+            "Failed to reset password"
+          );
+        },
+        alert: {
+          title: "Reset Password",
+          description: `This will reset the password for "${selectedArray[0]?.username}" to a temporary password. They will need to change it on their next login.`,
+          confirm: "Reset Password",
+          cancel: "Cancel",
         },
       },
       {
         label: selectedCount === 1 ? "Delete User" : "Delete Users",
         disabled: selectedCount === 0,
         onClick: async () => {
-          const payload = selectedArray.map((u) => ({
+          const payload: DeleteUsers = selectedArray.map((u) => ({
             id: u.id,
             username: u.username,
           }));
-          await deleteUsers(payload);
-          await fetchUsers();
+          const single = selectedCount === 1;
+          const ok = await withToast(
+            () => deleteUsers(payload),
+            single ? "User deleted" : "Users deleted",
+            single ? "Failed to delete user" : "Failed to delete users"
+          );
+          if (ok) await fetchUsers();
         },
+        alert: (() => {
+          const single = selectedCount === 1;
+          const username = single ? selectedArray[0].username : null;
+          return {
+            title: single ? "Delete User" : "Delete Users",
+            description: single
+              ? `This will permanently delete the user "${username}".`
+              : `This will permanently delete ${selectedCount} users.`,
+            confirm: single ? "Delete User" : "Delete Users",
+            cancel: "Cancel",
+          };
+        })(),
       },
     ],
     [selectedArray, selectedCount, setUser, setActiveStack]
@@ -95,7 +122,7 @@ export default function ManageUsers({
         label: "Create User",
         onClick: () => setActiveStack((stk) => [...stk, "Create User"]),
       }}
-      isLoading={loading}
+      loading={loading}
     />
   );
 }

@@ -1,7 +1,9 @@
 import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GalleryVerticalEnd } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 import {
   Form,
@@ -33,10 +35,22 @@ export function LoginForm({
     resolver: zodResolver(credentialsSchema),
     defaultValues: { username: "", password: "" },
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      if (error) setError(null);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, error]);
 
   async function onSubmit(creds: Credentials) {
+    setLoading(true);
     const result: ApiResponse<User> = await login(creds);
+    setLoading(false);
     if (!result.success) {
+      setError(result.message ?? "Login failed.");
       return;
     }
     if (isChallenge(result.data)) {
@@ -110,7 +124,15 @@ export function LoginForm({
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full mt-4">
+              {error && (
+                <p className="text-sm text-destructive text-center">{error}</p>
+              )}
+              <Button
+                type="submit"
+                className="w-full mt-4 cursor-pointer"
+                disabled={loading}
+              >
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Log In
               </Button>
             </div>

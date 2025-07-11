@@ -11,14 +11,14 @@ import config from "@/config";
 import { Status } from "@shared/types";
 import type { Credentials, AuthResult, UserData } from "@shared/validation";
 import { createUserService } from "@/services/user.service";
-import { type ServiceResponse } from "@/types/server.types";
+import type { ServiceResponse } from "@/types/server.types";
 import { createSuccess, createFail } from "@/utils/service.util";
 
 const cognitoClient = new CognitoIdentityProviderClient({
   region: config.cognito.region,
 });
 
-async function decodeJwtPayload(token: string): any {
+async function decodeJwtPayload(token: string): Promise<any> {
   const base64Url = token.split(".")[1];
   const payloadJson = Buffer.from(base64Url, "base64").toString("utf8");
   return JSON.parse(payloadJson);
@@ -65,25 +65,17 @@ export async function loginService({
     });
   }
 
-  const idToken = response.AuthenticationResult?.IdToken;
-
   const pool = await getPool();
   const result = await pool.query(
-    `
-      SELECT id, fname, lname, username, role, status
-      FROM users
-      WHERE username = $1
-    `,
+    `SELECT id, fname, lname, username, side, role, status FROM users WHERE username = $1`,
     [username]
   );
 
   const user = result.rows[0];
-
   if (!user) {
     return createFail({ status: 404, message: "User not found" });
   }
-
-  if (user.status == Status.Deactivated) {
+  if (user.status === Status.Deactivated) {
     return createFail({ status: 403, message: "User deactivated" });
   }
 
@@ -99,26 +91,21 @@ export async function completeChallengeService(
     ClientId: config.cognito.clientId,
     ChallengeName: "NEW_PASSWORD_REQUIRED",
     Session: session,
-    ChallengeResponses: {
-      USERNAME: username,
-      NEW_PASSWORD: newPassword,
-    },
+    ChallengeResponses: { USERNAME: username, NEW_PASSWORD: newPassword },
   });
 
   const response = await cognitoClient.send(command);
-
   const idToken = response.AuthenticationResult?.IdToken;
   if (!idToken) {
     return createFail({ status: 401, message: "Password challenge failed" });
   }
-
   return createSuccess({ status: 204 });
 }
 
 export async function registerService(
   userData: UserData
 ): Promise<ServiceResponse<undefined>> {
-  const { username, fname, lname, role, status } = userData;
+  const { username, fname, lname, side, role, status } = userData;
   const pool = await getPool();
   const client = await pool.connect();
 
@@ -126,9 +113,9 @@ export async function registerService(
     await client.query("BEGIN");
 
     await client.query(
-      `INSERT INTO users (username, fname, lname, role, status)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [username, fname, lname, role, status]
+      `INSERT INTO users (username, fname, lname, side, role, status)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [username, fname, lname, side, role, status]
     );
 
     const createCommand = new AdminCreateUserCommand({
@@ -137,14 +124,8 @@ export async function registerService(
       TemporaryPassword: config.cognito.tempPassword,
       MessageAction: "SUPPRESS",
       UserAttributes: [
-        {
-          Name: "email",
-          Value: `${username}@placeholder.com`,
-        },
-        {
-          Name: "email_verified",
-          Value: "true",
-        },
+        { Name: "email", Value: `${username}@placeholder.com` },
+        { Name: "email_verified", Value: "true" },
       ],
     });
 
@@ -166,13 +147,11 @@ export async function registerService(
 
     await client.query("COMMIT");
     return createSuccess({ status: 201 });
-  } catch (err) {
+  } catch (err: any) {
     await client.query("ROLLBACK");
-
     if (err.code === "23505") {
       return createFail({ status: 409, message: "Username already exists" });
     }
-
     throw err;
   } finally {
     client.release();

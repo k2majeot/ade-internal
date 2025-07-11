@@ -49,6 +49,11 @@ export function errorHandler(
   res: Response,
   next: NextFunction
 ) {
-  console.error("Uncaught Error:", err);
-  return res.fail({ status: 500, message: "Internal server error" });
+  console.error("Unhandled error:", {
+    message: err.message,
+    stack: err.stack,
+    path: req.path,
+    method: req.method,
+  });
+  res.status(500).json({ error: "Internal server error" });
 }

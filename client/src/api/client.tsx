@@ -7,6 +7,7 @@ import type {
 } from "@shared/validation";
 import {
   serialIdSchema,
+  serialIdListSchema,
   clientSchema,
   clientListSchema,
 } from "@shared/validation";
@@ -14,6 +15,8 @@ import {
   getClientService,
   getClientsService,
   updateClientService,
+  deactivateClientsService,
+  deleteClientsService,
   createClientService,
 } from "@/services/clientService";
 import type { ApiResult } from "@/types/apiTypes";
@@ -43,6 +46,28 @@ export async function updateClient(
     payload: { params: { id }, body: clientData },
     payloadSchemas: { params: serialIdSchema, body: clientSchema },
   });
+}
+
+export async function deactivateClients(
+  ids: SerialId[]
+): Promise<ApiResult<undefined>> {
+  const result = await fetchHandler({
+    service: deactivateClientsService,
+    payload: { body: { ids } },
+    payloadSchemas: { body: serialIdListSchema },
+  });
+  return result;
+}
+
+export async function deleteClients(
+  ids: SerialIdList
+): Promise<ApiResult<undefined>> {
+  const result = await fetchHandler({
+    service: deleteClientsService,
+    payload: { body: ids },
+    payloadSchemas: { body: serialIdListSchema },
+  });
+  return result;
 }
 
 export async function createClient(

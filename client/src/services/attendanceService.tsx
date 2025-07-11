@@ -5,7 +5,6 @@ export async function getAttendanceService({
   query,
 }: RequestPayload<undefined, AttendanceQuery>): Promise<Response> {
   const params = new URLSearchParams(query);
-
   return fetch(`/api/attendance?${params.toString()}`);
 }
 

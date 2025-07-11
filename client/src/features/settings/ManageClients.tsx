@@ -3,11 +3,14 @@ import { ManageTable } from "@/components/ManageTable";
 import { getClients } from "@/api/client";
 import type { Client } from "@shared/validation";
 import type { ApiResponse } from "@/types/apiTypes";
+import { deactivateClients, deleteClients } from "@/api/client";
+import type { SerialId } from "@shared/validation";
+import { withToast } from "@/lib/utils";
 
 const columns = [
   { label: "First Name", key: "fname" },
   { label: "Last Name", key: "lname" },
-  { label: "Status", key: "status" },
+  { label: "Side", key: "side" },
 ];
 
 type Props = {
@@ -27,20 +30,8 @@ export default function ManageClients({
   );
   const [loading, setLoading] = useState(true);
 
-  const actions = useMemo(
-    () => [
-      {
-        label: "Update Client",
-        disabled: selectedClients.size !== 1,
-        onClick: () => {
-          const client = [...selectedClients][0];
-          setClient(client);
-          setActiveStack((stk) => [...stk, "Update Client"]);
-        },
-      },
-    ],
-    [selectedClients, setClient, setActiveStack]
-  );
+  const selectedArray = [...selectedClients];
+  const selectedCount = selectedArray.length;
 
   const fetchClients = async () => {
     setLoading(true);
@@ -49,6 +40,43 @@ export default function ManageClients({
     setSelectedClients(new Set());
     setLoading(false);
   };
+
+  const actions = useMemo(
+    () => [
+      {
+        label: "Update Client",
+        disabled: selectedCount !== 1,
+        onClick: () => {
+          setClient(selectedArray[0]);
+          setActiveStack((stk) => [...stk, "Update Client"]);
+        },
+      },
+      {
+        label: selectedCount === 1 ? "Delete Client" : "Delete Clients",
+        disabled: selectedCount === 0,
+        onClick: async () => {
+          const ids: SerialId[] = selectedArray.map((c) => c.id);
+          const single = selectedCount === 1;
+          const ok = await withToast(
+            () => deleteClients({ ids }),
+            single ? "Client deleted" : "Clients deleted",
+            single ? "Failed to delete client" : "Failed to delete clients"
+          );
+          if (ok) await fetchClients();
+        },
+        alert: {
+          title: selectedCount === 1 ? "Delete Client" : "Delete Clients",
+          description:
+            selectedCount === 1
+              ? `This will permanently delete "${selectedArray[0]?.fname} ${selectedArray[0]?.lname}".`
+              : `This will permanently delete ${selectedCount} clients.`,
+          confirm: selectedCount === 1 ? "Delete Client" : "Delete Clients",
+          cancel: "Cancel",
+        },
+      },
+    ],
+    [selectedArray, selectedCount, setClient, setActiveStack]
+  );
 
   const toggle = (client: Client) =>
     setSelectedClients((prev) => {
@@ -73,7 +101,7 @@ export default function ManageClients({
         label: "Create Client",
         onClick: () => setActiveStack((stk) => [...stk, "Create Client"]),
       }}
-      isLoading={loading}
+      loading={loading}
     />
   );
 }

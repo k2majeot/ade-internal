@@ -61,7 +61,6 @@ export async function deactivateUsers(
     payload: { body: { ids } },
     payloadSchemas: { body: serialIdListSchema },
   });
-  console.log(result);
   return result;
 }
 

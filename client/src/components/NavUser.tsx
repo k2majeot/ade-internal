@@ -1,5 +1,6 @@
+import { useNavigate } from "react-router-dom";
 import {
-  BadgeCheck,
+  UserPlus,
   Bell,
   MoreVertical,
   CreditCard,
@@ -30,10 +31,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
+import { logout } from "@/api/auth";
 import type { User } from "@shared/validation";
 import { useTheme } from "@/components/ThemeProvider";
 
 export default function NavUser({ user }: { user: User }) {
+  const navigate = useNavigate();
   const { isMobile } = useSidebar();
   const { theme, setTheme } = useTheme();
 
@@ -85,13 +88,13 @@ export default function NavUser({ user }: { user: User }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
+              <DropdownMenuItem className="cursor-pointer">
+                <UserPlus />
                 Account
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
+              <DropdownMenuSubTrigger className="cursor-pointer">
                 {theme === "light" ? (
                   <Sun className="mr-2 h-4 w-4" />
                 ) : theme === "dark" ? (
@@ -102,22 +105,37 @@ export default function NavUser({ user }: { user: User }) {
                 Theme
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent>
-                <DropdownMenuItem onClick={() => setTheme("light")}>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => setTheme("light")}
+                >
                   <Sun className="mr-2 h-4 w-4" />
                   Light
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => setTheme("dark")}
+                >
                   <Moon className="mr-2 h-4 w-4" />
                   Dark
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => setTheme("system")}
+                >
                   <Laptop className="mr-2 h-4 w-4" />
                   System
                 </DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={async () => {
+                await logout();
+                navigate("/login");
+              }}
+            >
               <LogOut />
               Log out
             </DropdownMenuItem>

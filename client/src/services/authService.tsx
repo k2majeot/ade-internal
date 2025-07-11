@@ -50,3 +50,15 @@ export async function registerService({
 export async function getSessionUserService(): Promise<Response> {
   return fetch("/api/auth/me");
 }
+
+export async function resetPasswordService({
+  body,
+}: RequestPayload<Username>): Promise<Response> {
+  return await fetch("/api/auth/reset-password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+}

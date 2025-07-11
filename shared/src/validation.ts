@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Role, Present, Status } from "./types";
+import { Role, Present, Status, Side } from "./generated/lookup.types";
 import { format } from "date-fns";
 
 const _ = {
@@ -38,11 +38,25 @@ const _ = {
   role: z.nativeEnum(Role, {
     errorMap: () => ({ message: "Role is required" }),
   }),
-  present: z.nativeEnum(Present),
+  side: z.nativeEnum(Side, {
+    errorMap: () => ({ message: "Side is required" }),
+  }),
+  attendance_status: z.nativeEnum(Present),
   status: z.nativeEnum(Status, {
     errorMap: () => ({ message: "Status is required" }),
   }),
 } as const;
+
+export const lookupsSchema = z.object({
+  role: _.role,
+  side: _.side,
+  attendance_status: _.attendance_satus,
+  status: _.status,
+});
+export type Lookups = z.infer<typeof lookupsSchema>;
+
+export const usernameSchema = z.object({ username: _.username });
+export type Username = z.infer<typeof usernameSchema>;
 
 export const serialIdSchema = _.serialId;
 export type SerialId = z.infer<typeof serialIdSchema>;
@@ -83,6 +97,7 @@ export const userSchema = z.object({
   fname: _.fname,
   lname: _.lname,
   username: _.username,
+  side: _.side,
   role: _.role,
   status: _.status,
 });
@@ -101,9 +116,9 @@ export const clientSchema = z.object({
   id: _.serialId,
   fname: _.fname,
   lname: _.lname,
+  side: _.side,
   status: _.status,
 });
-
 export type Client = z.infer<typeof clientSchema>;
 
 export const clientDataSchema = clientSchema.omit({ id: true });
@@ -114,6 +129,7 @@ export type ClientList = z.infer<typeof clientListSchema>;
 
 export const attendanceQuerySchema = z.object({
   date: _.date,
+  side: _.side,
 });
 export type AttendaneQuery = z.infer<typeof attendanceQuerySchema>;
 
@@ -135,18 +151,18 @@ export const attendanceUpsertSchema = z.array(
     present: _.present,
   })
 );
-export type AttendanceUpsert = z.infer<typeof upsertAttendanceReqSchema>;
+export type AttendanceUpsert = z.infer<typeof attendanceUpsertSchema>;
 
 export const clientsQuerySchema = z.object({
   name: z.string(),
 });
-export type ClientsQuery = z.infer<typeof getClientsSchema>;
+export type ClientsQuery = z.infer<typeof clientsQuerySchema>;
 
 export const goalsQuerySchema = z.object({
   cid: _.serialId,
   title: z.string().optional(),
 });
-export type GoalsQuery = z.infer<typeof getGoalsSchema>;
+export type GoalsQuery = z.infer<typeof goalsQuerySchema>;
 
 export const goalUpdateSchema = z.object({
   id: _.serialId,
@@ -155,13 +171,13 @@ export const goalUpdateSchema = z.object({
   objective: z.string().optional(),
   reinforcer: z.string().optional(),
 });
-export type GoalUpdate = z.infer<typeof updateGoalSchema>;
+export type GoalUpdate = z.infer<typeof goalUpdateSchema>;
 
 export const goalDataQuerySchema = z.object({
   gid: _.serialId,
   date: _.date,
 });
-export type GoalQuery = z.infer<typeof getGoalDataSchema>;
+export type GoalQuery = z.infer<typeof goalDataQuerySchema>;
 
 export const upsertGoalDataSchema = z.object({
   gid: _.serialId,
@@ -189,5 +205,4 @@ export const apiResponseSchema = z.discriminatedUnion("success", [
     errors: z.string().optional(),
   }),
 ]);
-
-export type ApiResponse<T> = z.infer<typeof ApiResponseSchema>;
+export type ApiResponse<T> = z.infer<typeof apiResponseSchema>;

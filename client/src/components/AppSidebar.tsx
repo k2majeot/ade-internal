@@ -32,6 +32,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
 import { useUser } from "@/context/UserContext";
+import { Side } from "@shared/types";
 import NavUser from "@/components/NavUser";
 import SideSwitcher from "@/components/SideSwitcher";
 import SettingsDialog from "@/features/settings/SettingsDialog";
@@ -49,8 +50,20 @@ export function AppSidebar() {
   const { user } = useUser();
 
   const sides = [
-    { name: "ADE", logo: Logo, role: user.role },
-    { name: "ADE Too!", logo: Logo, role: user.role },
+    {
+      name: "ADE",
+      logo: Logo,
+      role: user.role,
+      value: Side.One,
+      disabled: user.side !== Side.All && user.side !== Side.One,
+    },
+    {
+      name: "ADE Too!",
+      logo: Logo,
+      role: user.role,
+      value: Side.Two,
+      disabled: user.side !== Side.All && user.side !== Side.Two,
+    },
   ];
 
   return (
