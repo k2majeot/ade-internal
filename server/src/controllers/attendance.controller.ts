@@ -2,13 +2,13 @@ import {
   getAttendanceService,
   upsertAttendanceService,
 } from "@/services/attendance.service";
-import { type AttendanceQuery, type AttendanceList } from "@shared/types";
+import { type AttendaneQuery, type AttendanceList } from "@shared/validation";
 import { type ServiceResponse } from "@/types/server.types";
 import { isServiceSuccess } from "@/utils/controller.util";
-import { Side } from "@shared/generated/types/side.enum";
+import { Side } from "@shared/types";
 
 export async function getAttendance(req, res) {
-  const query: AttendanceQuery = req.validatedQuery;
+  const query: AttendaneQuery = req.validatedQuery;
   const userSide = req.user.side;
   const requestedSide = query.side;
 

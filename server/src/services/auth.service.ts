@@ -10,9 +10,8 @@ import { getPool } from "@/db";
 import config from "@/config";
 import { Status } from "@shared/types";
 import type { Credentials, AuthResult, UserData } from "@shared/validation";
-import { createUserService } from "@/services/user.service";
 import type { ServiceResponse } from "@/types/server.types";
-import { createSuccess, createFail } from "@/utils/service.util";
+import { createSuccess, createFail, getIdByCode, getCodeById } from "@/utils/service.util";
 
 const cognitoClient = new CognitoIdentityProviderClient({
   region: config.cognito.region,
@@ -67,7 +66,7 @@ export async function loginService({
 
   const pool = await getPool();
   const result = await pool.query(
-    `SELECT id, fname, lname, username, side, role, status FROM users WHERE username = $1`,
+    `SELECT id, fname, lname, username, side_id, role_id, status_id FROM users WHERE username = $1`,
     [username]
   );
 
@@ -75,11 +74,18 @@ export async function loginService({
   if (!user) {
     return createFail({ status: 404, message: "User not found" });
   }
-  if (user.status === Status.Deactivated) {
+  const statusCode = await getCodeById("status", user.status_id);
+  if (statusCode === Status.Deactivated) {
     return createFail({ status: 403, message: "User deactivated" });
   }
-
-  return createSuccess({ data: user });
+  return createSuccess({
+    data: {
+      ...user,
+      status: statusCode,
+      role: await getCodeById("role", user.role_id),
+      side: await getCodeById("side", user.side_id),
+    },
+  });
 }
 
 export async function completeChallengeService(
@@ -113,9 +119,16 @@ export async function registerService(
     await client.query("BEGIN");
 
     await client.query(
-      `INSERT INTO users (username, fname, lname, side, role, status)
+      `INSERT INTO users (username, fname, lname, side_id, role_id, status_id)
        VALUES ($1, $2, $3, $4, $5, $6)`,
-      [username, fname, lname, side, role, status]
+      [
+        username,
+        fname,
+        lname,
+        await getIdByCode("side", side),
+        await getIdByCode("role", role),
+        await getIdByCode("status", status),
+      ]
     );
 
     const createCommand = new AdminCreateUserCommand({

@@ -46,7 +46,7 @@ import {
   usernameSchema,
 } from "@shared/validation";
 
-import { Role } from "@shared/generated/lookup.types";
+import { Role } from "@shared/types";
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Role, Present, Status, Side } from "./generated/lookup.types";
+import { Role, AttendanceStatus, Status, Side } from "./generated/lookup.types";
 import { format } from "date-fns";
 
 const _ = {
@@ -41,7 +41,8 @@ const _ = {
   side: z.nativeEnum(Side, {
     errorMap: () => ({ message: "Side is required" }),
   }),
-  attendance_status: z.nativeEnum(Present),
+  attendance_status: z.nativeEnum(AttendanceStatus),
+  present: z.nativeEnum(AttendanceStatus),
   status: z.nativeEnum(Status, {
     errorMap: () => ({ message: "Status is required" }),
   }),
@@ -50,7 +51,7 @@ const _ = {
 export const lookupsSchema = z.object({
   role: _.role,
   side: _.side,
-  attendance_status: _.attendance_satus,
+  attendance_status: _.attendance_status,
   status: _.status,
 });
 export type Lookups = z.infer<typeof lookupsSchema>;

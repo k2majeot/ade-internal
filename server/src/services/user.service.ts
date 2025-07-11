@@ -19,7 +19,7 @@ import {
   getCodeById,
 } from "@/utils/service.util";
 import config from "@/config";
-import { Role } from "@shared/generated/lookup.types";
+import { Role } from "@shared/types";
 
 const cognitoClient = new CognitoIdentityProviderClient({
   region: config.cognito.region,

@@ -15,13 +15,14 @@ const toEnumKey = (c: string) =>
     .replace(/([a-z])([A-Z])/g, "$1_$2")
     .toUpperCase();
 
-const toEnumName = (t: string) =>
-  t
-    .replace(/ses$/, "s")
-    .replace(/s$/, "")
+const toEnumName = (t: string) => {
+  if (t.endsWith("ses")) t = t.slice(0, -2);
+  else if (t.endsWith("s")) t = t.slice(0, -1);
+  return t
     .split("_")
     .map((p) => p[0].toUpperCase() + p.slice(1))
     .join("");
+};
 
 const generateEnumSet = (enumName: string, rows: any[], columns: string[]) => {
   const enums = rows
