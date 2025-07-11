@@ -2,23 +2,12 @@ import {
   getAttendanceService,
   upsertAttendanceService,
 } from "@/services/attendance.service";
-import { type AttendaneQuery, type AttendanceList } from "@shared/validation";
+import { type AttendanceQuery, type AttendanceList } from "@shared/types";
 import { type ServiceResponse } from "@/types/server.types";
 import { isServiceSuccess } from "@/utils/controller.util";
-import { Side } from "@shared/types";
 
 export async function getAttendance(req, res) {
-  const query: AttendaneQuery = req.validatedQuery;
-  const userSide = req.user.side;
-  const requestedSide = query.side;
-
-  if (userSide !== Side.All && userSide !== requestedSide) {
-    return res.fail({
-      status: 403,
-      message: "Access denied: you do not have permission to access this side.",
-    });
-  }
-
+  const query: AttendanceQuery = req.validatedQuery;
   const serviceResponse: ServiceResponse<AttendanceList> =
     await getAttendanceService(query);
 

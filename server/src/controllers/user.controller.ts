@@ -4,7 +4,6 @@ import {
   updateUserService,
   deactivateUsersService,
   deleteUsersService,
-  resetPasswordService,
 } from "@/services/user.service";
 import type {
   SerialId,
@@ -12,8 +11,6 @@ import type {
   UserList,
   SerialIdList,
   DeleteUsers,
-  Username,
-  UserData,
 } from "@shared/validation";
 import { type ServiceResponse } from "@/types/server.types";
 import { isServiceSuccess } from "@/utils/controller.util";
@@ -94,22 +91,6 @@ export async function deleteUsers(req, res) {
   const serviceResponse: ServiceResponse<undefined> = await deleteUsersService(
     users
   );
-
-  if (!isServiceSuccess(serviceResponse)) {
-    return res.fail({
-      status: serviceResponse.status,
-      errors: serviceResponse.errors,
-      message: serviceResponse.message,
-    });
-  }
-
-  return res.status(serviceResponse.status).end();
-}
-
-export async function resetPassword(req, res) {
-  const { username }: Username = req.validatedBody;
-  const serviceResponse: ServiceResponse<undefined> =
-    await resetPasswordService(username);
 
   if (!isServiceSuccess(serviceResponse)) {
     return res.fail({

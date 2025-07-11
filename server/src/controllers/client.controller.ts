@@ -3,8 +3,6 @@ import {
   getClientsService,
   updateClientService,
   createClientService,
-  deactivateClientsService,
-  deleteClientsService,
 } from "@/services/client.service";
 
 import type {
@@ -12,7 +10,6 @@ import type {
   Client,
   ClientList,
   ClientData,
-  SerialIdList,
 } from "@shared/validation";
 import type { ServiceResponse } from "@/types/server.types";
 import { isServiceSuccess } from "@/utils/controller.util";
@@ -53,40 +50,6 @@ export async function getClients(req, res) {
     data: serviceResponse.data,
     message: serviceResponse.message,
   });
-}
-
-export async function deactivateClients(req, res) {
-  const { ids }: SerialIdList = req.validatedBody;
-
-  const serviceResponse: ServiceResponse<undefined> =
-    await deactivateClientsService(ids);
-
-  if (!isServiceSuccess(serviceResponse)) {
-    return res.fail({
-      status: serviceResponse.status,
-      errors: serviceResponse.errors,
-      message: serviceResponse.message,
-    });
-  }
-
-  return res.status(serviceResponse.status).end();
-}
-
-export async function deleteClients(req, res) {
-  const { ids }: SerialIdList = req.validatedBody;
-
-  const serviceResponse: ServiceResponse<undefined> =
-    await deleteClientsService(ids);
-
-  if (!isServiceSuccess(serviceResponse)) {
-    return res.fail({
-      status: serviceResponse.status,
-      errors: serviceResponse.errors,
-      message: serviceResponse.message,
-    });
-  }
-
-  return res.status(serviceResponse.status).end();
 }
 
 export async function updateClient(req, res) {
