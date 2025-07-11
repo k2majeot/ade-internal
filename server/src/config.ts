@@ -2,9 +2,11 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
-dotenv.config({
-  path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../.env"),
-});
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const env = process.env.NODE_ENV || "development";
+
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({ path: path.resolve(__dirname, `../.env.${env}`) });
 
 function required(key) {
   const value = process.env[key];

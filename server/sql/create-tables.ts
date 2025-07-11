@@ -1,6 +1,6 @@
 // create-tables.ts – schema using enums for CHECK constraints
 import { getPool } from "@/db";
-import { Present, Role, Status } from "@shared/types";
+import { AttendanceStatus, Role, Status } from "@shared/types";
 
 const pool = await getPool();
 
@@ -12,7 +12,10 @@ function enumCheck(column: string, values: string[]): string {
   return `CHECK (${column} IN (${formatted}))`;
 }
 
-const presentCheck = enumCheck("present", Object.values(Present));
+const attendanceStatusCheck = enumCheck(
+  "attendance_status",
+  Object.values(AttendanceStatus)
+);
 const roleCheck = enumCheck("role", Object.values(Role));
 const statusCheck = enumCheck("status", Object.values(Status));
 
@@ -54,7 +57,7 @@ await pool.query(`
     id SERIAL PRIMARY KEY,
     cid INTEGER REFERENCES clients(id) ON DELETE CASCADE,
     attendance_date DATE NOT NULL,
-    present TEXT NOT NULL ${presentCheck},
+    attendance_status TEXT NOT NULL ${attendanceStatusCheck},
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
     UNIQUE(cid, attendance_date)

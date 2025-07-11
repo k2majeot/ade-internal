@@ -1,7 +1,7 @@
 // seed.ts
 
 import { getPool } from "@/db";
-import { Present, Status } from "@shared/types";
+import { AttendanceStatus, Status } from "@shared/types";
 import { subDays, formatISO } from "date-fns";
 
 const pool = await getPool();
@@ -15,7 +15,9 @@ const rand = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 const log = (msg: string) => console.log("✅", msg);
 
 const statusValues = Object.values(Status) as Status[];
-const presentValues = Object.values(Present) as Present[];
+const attendanceStatusValues = Object.values(
+  AttendanceStatus
+) as AttendanceStatus[];
 
 async function seedClients() {
   const names = [
@@ -143,10 +145,10 @@ async function seedAttendance(rosterMap: Record<string, number[]>) {
   for (const [date, cids] of Object.entries(rosterMap)) {
     for (const cid of cids) {
       await pool.query(
-        `INSERT INTO attendance (cid, present, attendance_date)
+        `INSERT INTO attendance (cid, attendance_status, attendance_date)
          VALUES ($1,$2,$3)
          ON CONFLICT (cid, attendance_date) DO NOTHING`,
-        [cid, rand(presentValues), date]
+        [cid, rand(attendanceStatusValues), date]
       );
       total++;
     }
