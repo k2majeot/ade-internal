@@ -1,21 +1,4 @@
 import { type ServiceSuccess, type ServiceFail } from "@/types/server.types";
-import {
-  CodeToRole,
-  IdToRole,
-  RoleDetails,
-  CodeToStatus,
-  IdToStatus,
-  StatusDetails,
-  CodeToAttendanceStatus,
-  IdToAttendanceStatus,
-  AttendanceStatusDetails,
-  CodeToSide,
-  IdToSide,
-  SideDetails,
-  CodeToPromptLevel,
-  IdToPromptLevel,
-  PromptLevelDetails,
-} from "@shared/types";
 
 export function createSuccess<T>({
   status = 200,
@@ -49,52 +32,4 @@ export function createFail({
     errors,
     message,
   };
-}
-
-const EnumMaps = {
-  role: {
-    codeToEnum: CodeToRole,
-    idToEnum: IdToRole,
-    details: RoleDetails,
-  },
-  status: {
-    codeToEnum: CodeToStatus,
-    idToEnum: IdToStatus,
-    details: StatusDetails,
-  },
-  attendance_status: {
-    codeToEnum: CodeToAttendanceStatus,
-    idToEnum: IdToAttendanceStatus,
-    details: AttendanceStatusDetails,
-  },
-  side: {
-    codeToEnum: CodeToSide,
-    idToEnum: IdToSide,
-    details: SideDetails,
-  },
-  prompt_level: {
-    codeToEnum: CodeToPromptLevel,
-    idToEnum: IdToPromptLevel,
-    details: PromptLevelDetails,
-  },
-} as const;
-
-export async function getIdByCode(
-  table: keyof typeof EnumMaps,
-  code: string
-): Promise<number> {
-  const { codeToEnum, details } = EnumMaps[table];
-  const enumVal = codeToEnum[code];
-  if (!enumVal) throw new Error(`Invalid ${table} code: ${code}`);
-  return details[enumVal].id;
-}
-
-export async function getCodeById(
-  table: keyof typeof EnumMaps,
-  id: number
-): Promise<string> {
-  const { idToEnum, details } = EnumMaps[table];
-  const enumVal = idToEnum[id];
-  if (!enumVal) throw new Error(`Invalid ${table} ID: ${id}`);
-  return details[enumVal].code;
 }

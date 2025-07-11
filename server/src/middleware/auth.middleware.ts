@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import { Role } from "@shared/types";
+import { Role, RoleLevel } from "@shared/types";
 import { hasRequiredRole } from "@shared/utils";
 import { getUserService } from "@/services/user.service";
 

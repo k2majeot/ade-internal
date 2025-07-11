@@ -18,15 +18,12 @@ import {
   updateUser,
   deactivateUsers,
   deleteUsers,
-  resetPassword,
 } from "@/controllers/user.controller";
 import {
   getClient,
   getClients,
   updateClient,
   createClient,
-  deactivateClients,
-  deleteClients,
 } from "@/controllers/client.controller";
 import {
   getAttendance,
@@ -43,7 +40,6 @@ import {
   attendanceQuerySchema,
   attendanceUpsertSchema,
   clientDataSchema,
-  usernameSchema,
 } from "@shared/validation";
 
 import { Role } from "@shared/types";
@@ -74,19 +70,11 @@ router.post(
 
 router.get("/auth/me", asyncHandler(requireAuth), asyncHandler(getSessionUser));
 
-router.post(
-  "/auth/reset-password",
-  asyncHandler(requireAuth),
-  requireAtLeast(Role.Admin),
-  validationHandler({ body: usernameSchema }),
-  asyncHandler(resetPassword)
-);
-
 router.get(
-  "/users/:id",
+  "/user/:id",
+  validationHandler({ params: z.object({ id: serialIdSchema }) }),
   asyncHandler(requireAuth),
   requireAtLeast(Role.Admin),
-  validationHandler({ params: z.object({ id: serialIdSchema }) }),
   asyncHandler(getUser)
 );
 
@@ -99,84 +87,70 @@ router.get(
 
 router.post(
   "/users/deactivate",
+  validationHandler({ body: serialIdListSchema }),
   asyncHandler(requireAuth),
   requireAtLeast(Role.Admin),
-  validationHandler({ body: serialIdListSchema }),
   asyncHandler(deactivateUsers)
 );
 
 router.delete(
   "/users",
+  validationHandler({
+    body: deleteUsersSchema,
+  }),
   asyncHandler(requireAuth),
   requireAtLeast(Role.Admin),
-  validationHandler({ body: deleteUsersSchema }),
   asyncHandler(deleteUsers)
 );
 
 router.put(
-  "/users/:id",
-  asyncHandler(requireAuth),
-  requireAtLeast(Role.Admin),
+  "/user/:id",
   validationHandler({
     params: z.object({ id: serialIdSchema }),
     body: userDataSchema,
   }),
+  asyncHandler(requireAuth),
+  requireAtLeast(Role.Admin),
   asyncHandler(updateUser)
 );
 
 router.get(
-  "/clients/:id",
-  asyncHandler(requireAuth),
+  "/client/:id",
   validationHandler({ params: z.object({ id: serialIdSchema }) }),
+  asyncHandler(requireAuth),
   asyncHandler(getClient)
 );
 
 router.get("/clients", asyncHandler(requireAuth), asyncHandler(getClients));
 
-router.post(
-  "/clients/deactivate",
-  asyncHandler(requireAuth),
-  requireAtLeast(Role.Admin),
-  validationHandler({ body: serialIdListSchema }),
-  asyncHandler(deactivateClients)
-);
-
-router.delete(
-  "/clients",
-  asyncHandler(requireAuth),
-  requireAtLeast(Role.Admin),
-  validationHandler({ body: serialIdListSchema }),
-  asyncHandler(deleteClients)
-);
-
 router.put(
-  "/clients/:id",
-  asyncHandler(requireAuth),
+  "/client/:id",
   validationHandler({
     params: z.object({ id: serialIdSchema }),
     body: clientDataSchema,
   }),
+  asyncHandler(requireAuth),
   asyncHandler(updateClient)
 );
 
 router.post(
-  "/clients",
-  asyncHandler(requireAuth),
+  "/client",
   validationHandler({ body: clientDataSchema }),
+  asyncHandler(requireAuth),
   asyncHandler(createClient)
 );
 
 router.get(
   "/attendance",
-  asyncHandler(requireAuth),
   validationHandler({ query: attendanceQuerySchema }),
+  asyncHandler(requireAuth),
   asyncHandler(getAttendance)
 );
 
 router.post(
   "/attendance",
-  asyncHandler(requireAuth),
   validationHandler({ body: attendanceUpsertSchema }),
+  asyncHandler(requireAuth),
   asyncHandler(upsertAttendance)
 );
 

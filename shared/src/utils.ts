@@ -1,4 +1,4 @@
-import { Role, RoleDetails } from "./generated/lookup.types";
+import { Role, RoleLevel } from "./types";
 
 export function isChallenge(data: unknown): data is Challenge {
   return (
@@ -12,5 +12,5 @@ export function isChallenge(data: unknown): data is Challenge {
 }
 
 export function hasRequiredRole(userRole: Role, requiredRole: Role): boolean {
-  return RoleDetails[userRole].level >= RoleDetails[requiredRole].level;
+  return RoleLevel[userRole] >= RoleLevel[requiredRole];
 }
