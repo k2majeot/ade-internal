@@ -42,7 +42,6 @@ const _ = {
     errorMap: () => ({ message: "Side is required" }),
   }),
   attendance_status: z.nativeEnum(AttendanceStatus),
-  present: z.nativeEnum(AttendanceStatus),
   status: z.nativeEnum(Status, {
     errorMap: () => ({ message: "Status is required" }),
   }),
@@ -138,7 +137,7 @@ export const attendanceSchema = z.object({
   cid: _.serialId,
   fname: _.fname,
   lname: _.lname,
-  present: _.present.nullable(),
+  attendance_status: _.attendance_status.nullable(),
 });
 export type Attendance = z.infer<typeof attendanceSchema>;
 
@@ -149,7 +148,7 @@ export const attendanceUpsertSchema = z.array(
   z.object({
     cid: _.serialId,
     attendance_date: _.date,
-    present: _.present,
+    attendance_status: _.attendance_status,
   })
 );
 export type AttendanceUpsert = z.infer<typeof attendanceUpsertSchema>;
