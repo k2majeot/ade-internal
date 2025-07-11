@@ -9,9 +9,10 @@ import { createSuccess, createFail } from "@/utils/service.util";
 
 export async function getAttendanceService({
   date,
+  side,
 }: AttendanceQuery): Promise<ServiceResponse<AttendanceList>> {
   const pool = await getPool();
-  const params = [date];
+  const params = [date, side];
 
   const query = `
     SELECT
@@ -27,6 +28,7 @@ export async function getAttendanceService({
     AND attendance.attendance_date = $1
     WHERE client_roster.start_date <= $1
       AND (client_roster.end_date IS NULL OR client_roster.end_date >= $1)
+      AND clients.side = $2
     ORDER BY clients.lname
   `;
 

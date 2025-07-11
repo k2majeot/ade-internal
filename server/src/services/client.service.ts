@@ -14,7 +14,7 @@ export async function getClientService(
   const pool = await getPool();
 
   const query = `
-    SELECT id, fname, lname, status
+    SELECT id, fname, lname, side, status
     FROM clients
     WHERE id = $1
   `;
@@ -35,7 +35,7 @@ export async function getClientsService(): Promise<
   const pool = await getPool();
 
   const query = `
-    SELECT id, fname, lname, status
+    SELECT id, fname, lname, side, status
     FROM clients
   `;
   const result = await pool.query(query);
@@ -46,15 +46,15 @@ export async function getClientsService(): Promise<
 
 export async function updateClientService(
   id: SerialId,
-  { fname, lname, status }: ClientData
+  { fname, lname, side, status }: ClientData
 ): Promise<ServiceResponse<undefined>> {
   const pool = await getPool();
 
   const result = await pool.query(
     `UPDATE clients
-     SET fname = $1, lname = $2, status = $3
-     WHERE id = $4`,
-    [fname, lname, status, id]
+     SET fname = $1, lname = $2, side = $3, status = $4
+     WHERE id = $5`,
+    [fname, lname, side, status, id]
   );
 
   if (result.rowCount === 0) {
@@ -67,6 +67,7 @@ export async function updateClientService(
 export async function createClientService({
   fname,
   lname,
+  side,
   status,
 }: ClientData): Promise<ServiceResponse<undefined>> {
   const pool = await getPool();
@@ -76,10 +77,10 @@ export async function createClientService({
     await client.query("BEGIN");
 
     const insertClientResult = await client.query(
-      `INSERT INTO clients (fname, lname, status)
-       VALUES ($1, $2, $3)
+      `INSERT INTO clients (fname, lname, side, status)
+       VALUES ($1, $2, $3, $4)
        RETURNING id`,
-      [fname, lname, status]
+      [fname, lname, side, status]
     );
 
     const cid = insertClientResult.rows[0]?.id;

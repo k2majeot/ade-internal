@@ -11,7 +11,7 @@ import {
 
 import { getPool } from "@/db";
 import config from "@/config";
-import { AttendanceStatus, Status, Role } from "@shared/types";
+import { AttendanceStatus, Status, Role, Side } from "@shared/types";
 import { registerService } from "@/services/auth.service";
 
 // -----------------------------------------------------------------------------
@@ -87,6 +87,7 @@ function enumCheck(column: string, values: string[]): string {
   );
   const roleCheck = enumCheck("role", Object.values(Role));
   const statusCheck = enumCheck("status", Object.values(Status));
+  const sideCheck = enumCheck("side", Object.values(Side));
 
   await pool.query(`
     CREATE TABLE users (
@@ -94,6 +95,7 @@ function enumCheck(column: string, values: string[]): string {
       fname TEXT NOT NULL,
       lname TEXT NOT NULL,
       username TEXT NOT NULL UNIQUE,
+      side TEXT NOT NULL ${sideCheck},
       role TEXT NOT NULL ${roleCheck},
       status TEXT NOT NULL ${statusCheck}
     );
@@ -102,6 +104,7 @@ function enumCheck(column: string, values: string[]): string {
       id SERIAL PRIMARY KEY,
       fname TEXT NOT NULL,
       lname TEXT NOT NULL,
+      side TEXT NOT NULL ${sideCheck},
       status TEXT NOT NULL ${statusCheck}
     );
 
@@ -155,6 +158,7 @@ function enumCheck(column: string, values: string[]): string {
   // 4. Seeding helpers & data
   // ────────────────────────────────────────
   const statusValues = Object.values(Status) as Status[];
+  const sideValues = Object.values(Side) as Side[];
   const attendanceStatusValues = Object.values(
     AttendanceStatus
   ) as AttendanceStatus[];
@@ -180,8 +184,8 @@ function enumCheck(column: string, values: string[]): string {
 
     for (const [fname, lname] of names) {
       await pool.query(
-        `INSERT INTO clients (fname, lname, status) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING`,
-        [fname, lname, rand(statusValues)]
+        `INSERT INTO clients (fname, lname, side, status) VALUES ($1,$2,$3,$4) ON CONFLICT DO NOTHING`,
+        [fname, lname, rand(sideValues), rand(statusValues)]
       );
     }
 
@@ -306,6 +310,7 @@ function enumCheck(column: string, values: string[]): string {
     username: "admin",
     fname: "Admin",
     lname: "User",
+    side: Side.Both,
     role: Role.Admin,
     status: Status.Active,
   } as any); // cast to satisfy Service typing
