@@ -55,14 +55,14 @@ export function AppSidebar() {
       logo: Logo,
       role: user.role,
       value: Side.One,
-      disabled: user.side !== Side.All && user.side !== Side.One,
+      disabled: user.side !== Side.Both && user.side !== Side.One,
     },
     {
       name: "ADE Too!",
       logo: Logo,
       role: user.role,
       value: Side.Two,
-      disabled: user.side !== Side.All && user.side !== Side.Two,
+      disabled: user.side !== Side.Both && user.side !== Side.Two,
     },
   ];
 

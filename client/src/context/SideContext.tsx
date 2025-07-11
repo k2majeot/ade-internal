@@ -16,7 +16,7 @@ export const SideProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!user) return;
 
-    const initialSide = user.side === Side.All ? Side.One : user.side;
+    const initialSide = user.side === Side.Both ? Side.One : user.side;
     setSide(initialSide as Side);
   }, [user]);
 
