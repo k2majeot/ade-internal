@@ -11,7 +11,7 @@ import type {
   AttendanceList,
 } from "@shared/validation";
 import type { ApiResult } from "@/types/apiTypes";
-import { Present } from "@shared/types";
+import { AttendanceStatus } from "@shared/types";
 
 import AttendanceTable from "./AttendanceTable";
 import { AttendanceButtons, AttendanceFilters } from "./AttendanceControls";
@@ -19,7 +19,7 @@ import { AttendanceButtons, AttendanceFilters } from "./AttendanceControls";
 type AttendanceUi = {
   data: Attendance;
   isDirty: boolean;
-  original: Present;
+  original: AttendanceStatus;
 };
 
 export default function Attendance() {
@@ -46,7 +46,7 @@ export default function Attendance() {
 
     setAttendance(
       result.data.map((entry) => {
-        const present = entry.present ?? Present.NotScheduled;
+        const present = entry.present ?? AttendanceStatus.NotScheduled;
         return {
           data: { ...entry, present },
           original: present,
@@ -63,7 +63,7 @@ export default function Attendance() {
     void fetchAttendance();
   }, [date, side]);
 
-  const onPresentChange = (cid: number, val: Present) => {
+  const onPresentChange = (cid: number, val: AttendanceStatus) => {
     setAttendance((prev) =>
       prev.map((entry) =>
         entry.data.cid === cid

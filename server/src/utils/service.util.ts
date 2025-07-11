@@ -1,5 +1,21 @@
 import { type ServiceSuccess, type ServiceFail } from "@/types/server.types";
-import { RoleDetails } from "@shared/generated/lookup.types";
+import {
+  CodeToRole,
+  IdToRole,
+  RoleDetails,
+  CodeToStatus,
+  IdToStatus,
+  StatusDetails,
+  CodeToAttendanceStatus,
+  IdToAttendanceStatus,
+  AttendanceStatusDetails,
+  CodeToSide,
+  IdToSide,
+  SideDetails,
+  CodeToPromptLevel,
+  IdToPromptLevel,
+  PromptLevelDetails,
+} from "@shared/types";
 
 export function createSuccess<T>({
   status = 200,
@@ -63,7 +79,7 @@ const EnumMaps = {
   },
 } as const;
 
-async function getIdByCode(
+export async function getIdByCode(
   table: keyof typeof EnumMaps,
   code: string
 ): Promise<number> {
@@ -73,7 +89,7 @@ async function getIdByCode(
   return details[enumVal].id;
 }
 
-async function getCodeById(
+export async function getCodeById(
   table: keyof typeof EnumMaps,
   id: number
 ): Promise<string> {

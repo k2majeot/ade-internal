@@ -10,14 +10,14 @@ import {
 } from "@/components/ui/table";
 
 import { cn } from "@/lib/utils";
-import { Present } from "@shared/types";
+import { AttendanceStatus } from "@shared/types";
 import type { Attendance } from "@shared/validation";
 import type { AttendanceUi } from "./Attendance";
 
 type Props = {
   data: AttendanceUi[];
   edit: boolean;
-  onPresentChange: (cid: number, val: Present) => void;
+  onPresentChange: (cid: number, val: AttendanceStatus) => void;
 };
 
 export default function AttendanceTable({
@@ -25,10 +25,10 @@ export default function AttendanceTable({
   edit,
   onPresentChange,
 }: Props) {
-  const bgColorMap: Record<Present, string> = {
-    [Present.Here]: "bg-[var(--attendance-present-bg)]",
-    [Present.Absent]: "bg-[var(--attendance-absent-bg)]",
-    [Present.NotScheduled]: "bg-[var(--attendance-not-scheduled-bg)]",
+  const bgColorMap: Record<AttendanceStatus, string> = {
+    [AttendanceStatus.Present]: "bg-[var(--attendance-present-bg)]",
+    [AttendanceStatus.Absent]: "bg-[var(--attendance-absent-bg)]",
+    [AttendanceStatus.NotScheduled]: "bg-[var(--attendance-not-scheduled-bg)]",
   };
 
   return (
@@ -49,7 +49,7 @@ export default function AttendanceTable({
                 {row.data.lname}, {row.data.fname}
               </TableCell>
 
-              {[Present.Here, Present.Absent, Present.NotScheduled].map(
+              {[AttendanceStatus.Present, AttendanceStatus.Absent, AttendanceStatus.NotScheduled].map(
                 (val) => (
                   <TableCell
                     key={val}
@@ -68,9 +68,9 @@ export default function AttendanceTable({
                   >
                     {row.data.present === val && (
                       <div className="flex flex-col items-center justify-center gap-2">
-                        {val === Present.Here && <CheckCircle />}
-                        {val === Present.Absent && <XCircle />}
-                        {val === Present.NotScheduled && <PauseCircle />}
+                        {val === AttendanceStatus.Present && <CheckCircle />}
+                        {val === AttendanceStatus.Absent && <XCircle />}
+                        {val === AttendanceStatus.NotScheduled && <PauseCircle />}
                         <span className="text-[9px] sm:text-sm">{val}</span>
                       </div>
                     )}

@@ -45,48 +45,48 @@ export const SideDetails: Record<Side, { id: number; code: string; label: string
   [Side.TWO]: { id: 2, code: "two", label: "ADE TOO!" },
 };
 
-export enum Statu {
+export enum Status {
   ACTIVE = "active",
   DEACTIVATED = "deactivated",
 }
 
-export const CodeToStatu: Record<string, Statu> = {
-  "active": Statu.ACTIVE,
-  "deactivated": Statu.DEACTIVATED,
+export const CodeToStatus: Record<string, Status> = {
+  "active": Status.ACTIVE,
+  "deactivated": Status.DEACTIVATED,
 };
 
-export const IdToStatu: Record<number, Statu> = {
-  1: Statu.ACTIVE,
-  2: Statu.DEACTIVATED,
+export const IdToStatus: Record<number, Status> = {
+  1: Status.ACTIVE,
+  2: Status.DEACTIVATED,
 };
 
-export const StatuDetails: Record<Statu, { id: number; code: string; label: string }> = {
-  [Statu.ACTIVE]: { id: 1, code: "active", label: "Active" },
-  [Statu.DEACTIVATED]: { id: 2, code: "deactivated", label: "Deactivated" },
+export const StatusDetails: Record<Status, { id: number; code: string; label: string }> = {
+  [Status.ACTIVE]: { id: 1, code: "active", label: "Active" },
+  [Status.DEACTIVATED]: { id: 2, code: "deactivated", label: "Deactivated" },
 };
 
-export enum AttendanceStatu {
+export enum AttendanceStatus {
   ABSENT = "absent",
   NOT_SCHEDULED = "not_scheduled",
   PRESENT = "present",
 }
 
-export const CodeToAttendanceStatu: Record<string, AttendanceStatu> = {
-  "absent": AttendanceStatu.ABSENT,
-  "not_scheduled": AttendanceStatu.NOT_SCHEDULED,
-  "present": AttendanceStatu.PRESENT,
+export const CodeToAttendanceStatus: Record<string, AttendanceStatus> = {
+  "absent": AttendanceStatus.ABSENT,
+  "not_scheduled": AttendanceStatus.NOT_SCHEDULED,
+  "present": AttendanceStatus.PRESENT,
 };
 
-export const IdToAttendanceStatu: Record<number, AttendanceStatu> = {
-  2: AttendanceStatu.ABSENT,
-  3: AttendanceStatu.NOT_SCHEDULED,
-  1: AttendanceStatu.PRESENT,
+export const IdToAttendanceStatus: Record<number, AttendanceStatus> = {
+  2: AttendanceStatus.ABSENT,
+  3: AttendanceStatus.NOT_SCHEDULED,
+  1: AttendanceStatus.PRESENT,
 };
 
-export const AttendanceStatuDetails: Record<AttendanceStatu, { id: number; code: string; label: string }> = {
-  [AttendanceStatu.ABSENT]: { id: 2, code: "absent", label: "Absent" },
-  [AttendanceStatu.NOT_SCHEDULED]: { id: 3, code: "not_scheduled", label: "Not Scheduled" },
-  [AttendanceStatu.PRESENT]: { id: 1, code: "present", label: "Present" },
+export const AttendanceStatusDetails: Record<AttendanceStatus, { id: number; code: string; label: string }> = {
+  [AttendanceStatus.ABSENT]: { id: 2, code: "absent", label: "Absent" },
+  [AttendanceStatus.NOT_SCHEDULED]: { id: 3, code: "not_scheduled", label: "Not Scheduled" },
+  [AttendanceStatus.PRESENT]: { id: 1, code: "present", label: "Present" },
 };
 
 export enum PromptLevel {
@@ -132,7 +132,7 @@ export const PromptLevelDetails: Record<PromptLevel, { id: number; code: string;
 export const LookupRegistry = {
   roles: { table: "roles", codeToEnum: CodeToRole, idToEnum: IdToRole, details: RoleDetails },
   sides: { table: "sides", codeToEnum: CodeToSide, idToEnum: IdToSide, details: SideDetails },
-  statuses: { table: "statuses", codeToEnum: CodeToStatu, idToEnum: IdToStatu, details: StatuDetails },
-  attendance_statuses: { table: "attendance_statuses", codeToEnum: CodeToAttendanceStatu, idToEnum: IdToAttendanceStatu, details: AttendanceStatuDetails },
+  statuses: { table: "statuses", codeToEnum: CodeToStatus, idToEnum: IdToStatus, details: StatusDetails },
+  attendance_statuses: { table: "attendance_statuses", codeToEnum: CodeToAttendanceStatus, idToEnum: IdToAttendanceStatus, details: AttendanceStatusDetails },
   prompt_levels: { table: "prompt_levels", codeToEnum: CodeToPromptLevel, idToEnum: IdToPromptLevel, details: PromptLevelDetails },
 } as const;
