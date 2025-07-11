@@ -13,7 +13,7 @@ export const getAttendanceSchema = z.object({
 export const upsertAttendanceSchema = z.object({
   id: serialIdVal,
   attendance_date: dateVal,
-  present: z.boolean(),
+  attendance_status: z.string(),
 });
 
 export const upsertAttendanceArraySchema = z.array(upsertAttendanceSchema);

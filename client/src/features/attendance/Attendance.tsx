@@ -46,10 +46,11 @@ export default function Attendance() {
 
     setAttendance(
       result.data.map((entry) => {
-        const present = entry.present ?? AttendanceStatus.NotScheduled;
+        const status =
+          entry.attendance_status ?? AttendanceStatus.NotScheduled;
         return {
-          data: { ...entry, present },
-          original: present,
+          data: { ...entry, attendance_status: status },
+          original: status,
           isDirty: true,
         };
       })
@@ -63,13 +64,13 @@ export default function Attendance() {
     void fetchAttendance();
   }, [date, side]);
 
-  const onPresentChange = (cid: number, val: AttendanceStatus) => {
+  const onStatusChange = (cid: number, val: AttendanceStatus) => {
     setAttendance((prev) =>
       prev.map((entry) =>
         entry.data.cid === cid
           ? {
               ...entry,
-              data: { ...entry.data, present: val },
+              data: { ...entry.data, attendance_status: val },
               isDirty: val !== entry.original,
             }
           : entry
@@ -81,7 +82,7 @@ export default function Attendance() {
     setAttendance((prev) =>
       prev.map((entry) => ({
         ...entry,
-        data: { ...entry.data, present: entry.original },
+        data: { ...entry.data, attendance_status: entry.original },
         isDirty: false,
       }))
     );
@@ -91,7 +92,7 @@ export default function Attendance() {
   const onSubmit = async () => {
     const attendanceList = attendance.map((entry) => ({
       cid: entry.data.cid,
-      present: entry.data.present,
+      attendance_status: entry.data.attendance_status,
       attendance_date: date,
     }));
 
@@ -107,7 +108,7 @@ export default function Attendance() {
     setAttendance((prev) =>
       prev.map((entry) => ({
         ...entry,
-        original: entry.data.present,
+        original: entry.data.attendance_status,
         isDirty: false,
       }))
     );
@@ -137,7 +138,7 @@ export default function Attendance() {
           <AttendanceTable
             data={filteredAttendance}
             edit={edit}
-            onPresentChange={onPresentChange}
+            onStatusChange={onStatusChange}
           />
         </div>
       </CardContent>

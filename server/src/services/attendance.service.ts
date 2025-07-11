@@ -19,7 +19,7 @@ export async function getAttendanceService({
       clients.id AS cid,
       clients.fname,
       clients.lname,
-      attendance.present
+      attendance.attendance_status
     FROM client_roster
     JOIN clients
       ON clients.id = client_roster.cid
@@ -47,15 +47,15 @@ export async function upsertAttendanceService(
   try {
     await client.query("BEGIN");
 
-    for (const { cid, attendance_date, present } of list) {
+    for (const { cid, attendance_date, attendance_status } of list) {
       await client.query(
         `
-        INSERT INTO attendance (cid, attendance_date, present)
+        INSERT INTO attendance (cid, attendance_date, attendance_status)
         VALUES ($1, $2, $3)
         ON CONFLICT (cid, attendance_date)
-        DO UPDATE SET present = EXCLUDED.present
+        DO UPDATE SET attendance_status = EXCLUDED.attendance_status
         `,
-        [cid, attendance_date, present]
+        [cid, attendance_date, attendance_status]
       );
     }
 
