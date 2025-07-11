@@ -11,7 +11,7 @@ import type {
 } from "@shared/validation";
 import type { ServiceResponse } from "@/types/server.types";
 import { createSuccess, createFail } from "@/utils/service.util";
-import { Status } from "@shared/types";
+import { Status, Side } from "@shared/types";
 import config from "@/config";
 
 const cognitoClient = new CognitoIdentityProviderClient({
@@ -24,7 +24,7 @@ export async function getUserService(
   const pool = await getPool();
 
   const query = `
-    SELECT id, fname, lname, username, role, status
+    SELECT id, fname, lname, username, side, role, status
     FROM users
     WHERE id = $1
   `;
@@ -44,7 +44,7 @@ export async function getUserService(
 export async function getUsersService(): Promise<ServiceResponse<UserList>> {
   const pool = await getPool();
 
-  let query = `SELECT id, fname, lname, username, role, status FROM users`;
+  let query = `SELECT id, fname, lname, username, side, role, status FROM users`;
 
   const result = await pool.query(query);
   const userList: UserList = result.rows ?? [];
@@ -54,15 +54,15 @@ export async function getUsersService(): Promise<ServiceResponse<UserList>> {
 
 export async function updateUserService(
   id: SerialId,
-  { username, fname, lname, role, status }: UserData
+  { username, fname, lname, side, role, status }: UserData
 ): Promise<ServiceResponse<undefined>> {
   const pool = await getPool();
 
   const result = await pool.query(
     `UPDATE users
-   SET username = $1, fname = $2, lname = $3, role = $4, status = $5
-   WHERE id = $6;`,
-    [username, fname, lname, role, status, id]
+   SET username = $1, fname = $2, lname = $3, side = $4, role = $5, status = $6
+   WHERE id = $7;`,
+    [username, fname, lname, side, role, status, id]
   );
 
   if (result.rowCount === 0) {

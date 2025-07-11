@@ -8,7 +8,7 @@ import {
 
 import { getPool } from "@/db";
 import config from "@/config";
-import { Status } from "@shared/types";
+import { Status, Side } from "@shared/types";
 import type { Credentials, AuthResult, UserData } from "@shared/validation";
 import { createUserService } from "@/services/user.service";
 import { type ServiceResponse } from "@/types/server.types";
@@ -70,7 +70,7 @@ export async function loginService({
   const pool = await getPool();
   const result = await pool.query(
     `
-      SELECT id, fname, lname, username, role, status
+      SELECT id, fname, lname, username, side, role, status
       FROM users
       WHERE username = $1
     `,
@@ -118,7 +118,7 @@ export async function completeChallengeService(
 export async function registerService(
   userData: UserData
 ): Promise<ServiceResponse<undefined>> {
-  const { username, fname, lname, role, status } = userData;
+  const { username, fname, lname, side, role, status } = userData;
   const pool = await getPool();
   const client = await pool.connect();
 
@@ -126,9 +126,9 @@ export async function registerService(
     await client.query("BEGIN");
 
     await client.query(
-      `INSERT INTO users (username, fname, lname, role, status)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [username, fname, lname, role, status]
+      `INSERT INTO users (username, fname, lname, side, role, status)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [username, fname, lname, side, role, status]
     );
 
     const createCommand = new AdminCreateUserCommand({
