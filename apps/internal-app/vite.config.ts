@@ -6,11 +6,12 @@ import svgr from "vite-plugin-svgr";
 
 // https://vite.dev/config/
 export default defineConfig({
+  root: __dirname,
   plugins: [react(), tailwindcss(), svgr()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "@shared": path.resolve(__dirname, "../shared/src"),
+      "@shared": path.resolve(__dirname, "../../shared/src"),
     },
   },
   server: {
@@ -21,7 +22,7 @@ export default defineConfig({
       "/api": "http://localhost:3000",
     },
     fs: {
-      allow: ["..", "/home/ubuntu/my-app/shared"],
+      allow: [path.resolve(__dirname), path.resolve(__dirname, "../../shared")],
     },
   },
   optimizeDeps: {

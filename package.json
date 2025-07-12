@@ -1,0 +1,12 @@
+{
+  "name": "ade",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "shared"
+  ],
+  "dependencies": {
+    "@aws-sdk/credential-providers": "^3.844.0"
+  }
+}

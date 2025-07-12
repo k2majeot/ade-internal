@@ -17,6 +17,8 @@ function required(key) {
 }
 
 const config = {
+  env: env,
+
   server: {
     port: required("SERVER_PORT"),
   },
@@ -28,6 +30,7 @@ const config = {
 
   database: {
     host: required("DB_HOST"),
+    actual_host: required("DB_ACTUAL_HOST"),
     name: required("DB_NAME"),
     port: Number(required("DB_PORT")),
     region: required("RDS_REGION"),

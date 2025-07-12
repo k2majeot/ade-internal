@@ -1,7 +1,10 @@
 {
+  "name": "@ade/api",
+  "version": "1.0.0",
   "type": "module",
+  "main": "src/index.ts",
   "scripts": {
-    "dev": "tsx src/index.ts"
+    "dev": "tsx watch src/index.ts"
   },
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.812.0",
