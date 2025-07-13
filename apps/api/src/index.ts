@@ -3,7 +3,8 @@ import connectPgSimple from "connect-pg-simple";
 import express from "express";
 import session from "express-session";
 import cors from "cors";
-import router from "@/routes";
+import internalRouter from "@/routes/internal.routes";
+import publicRouter from "@/routes/public.routes";
 import {
   responseHandler,
   errorHandler,
@@ -41,7 +42,8 @@ app.use(
 
 app.use(responseHandler);
 
-app.use("/api", router);
+app.use("/api", internalRouter);
+app.use("/public" publicRouter);
 
 app.use(errorHandler);
 

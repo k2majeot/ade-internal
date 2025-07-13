@@ -11,24 +11,27 @@ import {
   register,
   completeChallenge,
   getSessionUser,
-} from "@/controllers/auth.controller";
+} from "@/controllers/internal/auth.controller";
+
 import {
   getUser,
   getUsers,
   updateUser,
   deactivateUsers,
   deleteUsers,
-} from "@/controllers/user.controller";
+} from "@/controllers/internal/user.controller";
+
 import {
   getClient,
   getClients,
   updateClient,
   createClient,
-} from "@/controllers/client.controller";
+} from "@/controllers/internal/client.controller";
+
 import {
   getAttendance,
   upsertAttendance,
-} from "@/controllers/attendance.controller";
+} from "@/controllers/internal/attendance.controller";
 
 import {
   credentialsSchema,
@@ -154,4 +157,5 @@ router.post(
   asyncHandler(upsertAttendance)
 );
 
-export default router;
+const internalRouter = router;
+export default internalRouter;
