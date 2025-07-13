@@ -20,11 +20,11 @@ const app = express();
 app.use(morgan("dev"));
 
 const publicCors = cors({
-  origin: "https://temp.adexperiences.com",
+  origin: config.cors.publicOrigin,
 });
 
 const internalCors = cors({
-  origin: "https://internal.adexperiences.com",
+  origin: config.cors.internalOrigin,
   credentials: true,
 });
 

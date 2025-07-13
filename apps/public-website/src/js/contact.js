@@ -1,3 +1,7 @@
+import { ZodError } from "zod";
+import { contactSchema } from "@shared/validation";
+import config from "@/js/config";
+
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("contact-form");
   const submitBtn = document.getElementById("contact-form-submit");
@@ -25,35 +29,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  function validateContact(contact) {
-    const errors = {};
-
-    if (!contact.firstName || contact.firstName.trim() === "") {
-      errors.firstName = "First name is required";
-    }
-
-    if (!contact.lastName || contact.lastName.trim() === "") {
-      errors.lastName = "Last name is required";
-    }
-
-    if (
-      !contact.email ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email.trim())
-    ) {
-      errors.email = "Valid email is required";
-    }
-
-    if (!contact.phone || contact.phone.trim() === "") {
-      errors.phone = "Phone number is required";
-    }
-
-    if (!contact.message || contact.message.trim() === "") {
-      errors.message = "Message is required";
-    }
-
-    return errors;
-  }
-
   form?.addEventListener("submit", async function (event) {
     event.preventDefault();
     clearErrors();
@@ -61,20 +36,23 @@ document.addEventListener("DOMContentLoaded", function () {
     const formData = new FormData(form);
 
     const contact = {
-      firstName: formData.get("firstName"),
-      lastName: formData.get("lastName"),
+      fname: formData.get("fname"),
+      lname: formData.get("lname"),
       email: formData.get("email"),
       phone: formData.get("phone"),
       message: formData.get("message"),
     };
 
-    const errors = validateContact(contact);
-
-    if (Object.keys(errors).length > 0) {
-      for (const [field, msg] of Object.entries(errors)) {
-        showError(field, msg);
+    try {
+      contactSchema.parse(contact);
+    } catch (err) {
+      if (err instanceof ZodError) {
+        err.errors.forEach((e) => {
+          showError(e.path[0], e.message);
+        });
+        return;
       }
-      return;
+      throw err;
     }
 
     submitBtn.disabled = true;
@@ -82,14 +60,11 @@ document.addEventListener("DOMContentLoaded", function () {
     submitText.style.display = "none";
 
     try {
-      const response = await fetch(
-        "https://api.adexperiences.com/public/contact",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(contact),
-        }
-      );
+      const response = await fetch(`${config.apiUrl}/public/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contact),
+      });
 
       if (!response.ok) {
         showError("message", "Something went wrong. Please try again.");

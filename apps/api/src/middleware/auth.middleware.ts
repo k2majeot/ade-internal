@@ -5,7 +5,6 @@ import { hasRequiredRole } from "@shared/utils/auth.util";
 import { getUserService } from "@/services/internal/user.service";
 
 export async function requireAuth(req, res, next) {
-  console.log("Session UID:", req.session.uid);
   if (!req.session?.uid) {
     return res.fail({ status: 401, message: "Unauthorized" });
   }

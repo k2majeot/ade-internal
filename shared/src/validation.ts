@@ -26,9 +26,11 @@ const _ = {
     .max(20, "Username must be at most 20 characters")
     .regex(/^[a-zA-Z0-9_]+$/, "Only letters, numbers, and underscores allowed"),
   email: z.string().email(),
-  phone: z.string().regex(/^(\+0?1\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/, {
-    message: "Invalid phone number format",
-  }),
+  phone: z
+    .string()
+    .regex(/^(\+0?1\s?)?(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}|\d{10})$/, {
+      message: "Invalid phone number format",
+    }),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters long")

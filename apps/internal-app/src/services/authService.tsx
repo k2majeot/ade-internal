@@ -4,11 +4,12 @@ import type {
   CompleteChallenge,
   UserData,
 } from "@shared/validation";
+import config from "@/config";
 
 export async function loginService({
   body,
 }: RequestPayload<Credentials>): Promise<Response> {
-  return await fetch("https://api.adexperiences.com/api/auth/login", {
+  return await fetch(`${config.apiUrl}/api/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -19,7 +20,7 @@ export async function loginService({
 }
 
 export async function logoutService(): Promise<Response> {
-  return fetch("https://api.adexperiences.com/api/auth/logout", {
+  return fetch(`${config.apiUrl}/api/auth/logout`, {
     method: "POST",
     credentials: "include",
   });
@@ -28,7 +29,7 @@ export async function logoutService(): Promise<Response> {
 export async function completeChallengeService({
   body,
 }: RequestPayload<CompleteChallenge>): Promise<Response> {
-  return await fetch("https://api.adexperiences.com/api/auth/challenge", {
+  return await fetch(`${config.apiUrl}/api/auth/challenge`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -41,7 +42,7 @@ export async function completeChallengeService({
 export async function registerService({
   body,
 }: RequestPayload<UserData>): Promise<Response> {
-  return await fetch("https://api.adexperiences.com/api/auth/register", {
+  return await fetch(`${config.apiUrl}/api/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -52,7 +53,7 @@ export async function registerService({
 }
 
 export async function getSessionUserService(): Promise<Response> {
-  return fetch("https://api.adexperiences.com/api/auth/me", {
+  return fetch(`${config.apiUrl}/api/auth/me`, {
     credentials: "include",
   });
 }
@@ -60,7 +61,7 @@ export async function getSessionUserService(): Promise<Response> {
 export async function resetPasswordService({
   body,
 }: RequestPayload<Username>): Promise<Response> {
-  return await fetch("https://api.adexperiences.com/api/auth/reset-password", {
+  return await fetch(`${config.apiUrl}/api/auth/reset-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

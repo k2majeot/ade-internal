@@ -6,7 +6,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const env = process.env.NODE_ENV || "development";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-dotenv.config({ path: path.resolve(__dirname, `../.env.${env}`) });
+dotenv.config({ path: path.resolve(__dirname, `../.env.local`) });
+dotenv.config({ path: path.resolve(__dirname, `../.env.${env}.local`) });
 
 function required(key) {
   const value = process.env[key];
@@ -42,6 +43,11 @@ const config = {
     userPoolId: required("COGNITO_USER_POOL_ID"),
     region: required("COGNITO_REGION"),
     tempPassword: required("COGNITO_TEMP_PASSWORD"),
+  },
+
+  cors: {
+    internalOrigin: required("APP_URL"),
+    publicOrigin: required("WEBSITE_URL"),
   },
 };
 
