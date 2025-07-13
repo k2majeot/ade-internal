@@ -10,8 +10,8 @@ import type {
   Attendance,
   AttendanceList,
 } from "@shared/validation";
-import type { ApiResult } from "@/types/apiTypes";
-import { AttendanceStatus } from "@shared/types";
+import type { ClientResult } from "@shared/types/apiResult.types";
+import { AttendanceStatus } from "@shared/types/domain.types";
 
 import AttendanceTable from "./AttendanceTable";
 import { AttendanceButtons, AttendanceFilters } from "./AttendanceControls";
@@ -38,7 +38,7 @@ export default function Attendance() {
 
   const fetchAttendance = async () => {
     const query: AttendanceQuery = { date, side };
-    const result: ApiResult<AttendanceList> = await getAttendance(query);
+    const result: ClientResult<AttendanceList> = await getAttendance(query);
     if (!result.success) {
       setAttendance([]);
       return;
@@ -46,8 +46,7 @@ export default function Attendance() {
 
     setAttendance(
       result.data.map((entry) => {
-        const status =
-          entry.attendance_status ?? AttendanceStatus.NotScheduled;
+        const status = entry.attendance_status ?? AttendanceStatus.NotScheduled;
         return {
           data: { ...entry, attendance_status: status },
           original: status,

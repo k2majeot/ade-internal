@@ -8,7 +8,7 @@ import {
 
 import { getPool } from "@/db";
 import config from "@/config";
-import { Status, Side } from "@shared/types";
+import { Status, Side } from "@shared/types/domain.types";
 import type { Credentials, AuthResult, UserData } from "@shared/validation";
 import { createUserService } from "@/services/user.service";
 import { type ServiceResponse } from "@/types/server.types";

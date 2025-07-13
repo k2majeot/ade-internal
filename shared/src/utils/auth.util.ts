@@ -1,4 +1,4 @@
-import { Role, RoleLevel } from "@/types";
+import { Role, RoleLevel } from "../types/domain.types";
 
 export function isChallenge(data: unknown): data is Challenge {
   return (

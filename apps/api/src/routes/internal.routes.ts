@@ -45,7 +45,7 @@ import {
   clientDataSchema,
 } from "@shared/validation";
 
-import { Role } from "@shared/types";
+import { Role } from "@shared/types/domain.types";
 
 const router = express.Router();
 

@@ -1,7 +1,7 @@
 // seed.ts
 
 import { getPool } from "@/db";
-import { AttendanceStatus, Status, Side } from "@shared/types";
+import { AttendanceStatus, Status, Side } from "@shared/types/domain.types";
 import { subDays, formatISO } from "date-fns";
 
 const pool = await getPool();

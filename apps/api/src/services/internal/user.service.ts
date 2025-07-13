@@ -11,7 +11,7 @@ import type {
 } from "@shared/validation";
 import type { ServiceResponse } from "@/types/server.types";
 import { createSuccess, createFail } from "@/utils/service.util";
-import { Status, Side } from "@shared/types";
+import { Status, Side } from "@shared/types/domain.types";
 import config from "@/config";
 
 const cognitoClient = new CognitoIdentityProviderClient({

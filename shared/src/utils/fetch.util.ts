@@ -1,6 +1,6 @@
 import { ZodType } from "zod";
-import { apiResponseSchema, type ApiResponse } from "@shared/validation";
-import type { FetchResult } from "@shared/types/apiResult.types";
+import { apiResponseSchema, type ApiResponse } from "..//validation";
+import type { FetchResult } from "../types/apiResult.types";
 
 export type RequestPayload<B = undefined, Q = undefined, P = undefined> = {
   body?: B;

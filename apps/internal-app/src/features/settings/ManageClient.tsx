@@ -2,7 +2,7 @@ import { z } from "zod";
 import { useState } from "react";
 import GenericForm, { type Field } from "@/components/GenericForm";
 import { createClient, updateClient } from "@/api/client";
-import { Status, Side } from "@shared/types";
+import { Status, Side } from "@shared/types/domain.types";
 import { clientDataSchema } from "@shared/validation";
 import type { Client } from "@/types";
 import { toast } from "sonner";

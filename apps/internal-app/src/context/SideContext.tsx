@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useUser } from "@/context/UserContext";
-import { Side } from "@shared/types";
+import { Side } from "@shared/types/domain.types";
 
 type SideContextType = {
   side: Side;

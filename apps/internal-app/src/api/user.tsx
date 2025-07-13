@@ -21,10 +21,10 @@ import {
   deactivateUsersService,
   deleteUsersService,
 } from "@/services/userService";
-import type { ApiResult } from "@/types/apiTypes";
+import type { ClientResult } from "@shared/types/apiResult.types";
 
-export async function getUser(id: SerialId): Promise<ApiResult<User>> {
-  const result: ApiResult<User> = await fetchHandler({
+export async function getUser(id: SerialId): Promise<ClientResult<User>> {
+  const result: ClientResult<User> = await fetchHandler({
     service: getUserService,
     outputSchema: userSchema,
     payload: { params: { id } },
@@ -33,7 +33,7 @@ export async function getUser(id: SerialId): Promise<ApiResult<User>> {
   return result;
 }
 
-export async function getUsers(): Promise<ApiResult<UserList>> {
+export async function getUsers(): Promise<ClientResult<UserList>> {
   const result = await fetchHandler({
     service: getUsersService,
     outputSchema: userListSchema,
@@ -44,7 +44,7 @@ export async function getUsers(): Promise<ApiResult<UserList>> {
 export async function updateUser(
   id: SerialId,
   userData: UserData
-): Promise<ApiResult<undefined>> {
+): Promise<ClientResult<undefined>> {
   const result = await fetchHandler({
     service: updateUserService,
     payload: { params: { id }, body: userData },
@@ -55,7 +55,7 @@ export async function updateUser(
 
 export async function deactivateUsers(
   ids: SerialId[]
-): Promise<ApiResult<undefined>> {
+): Promise<ClientResult<undefined>> {
   const result = await fetchHandler({
     service: deactivateUsersService,
     payload: { body: { ids } },
@@ -66,7 +66,7 @@ export async function deactivateUsers(
 
 export async function deleteUsers(
   users: DeleteUsers
-): Promise<ApiResult<undefined>> {
+): Promise<ClientResult<undefined>> {
   const result = await fetchHandler({
     service: deleteUsersService,
     payload: { body: users },

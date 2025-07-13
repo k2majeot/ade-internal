@@ -16,11 +16,11 @@ import {
   upsertAttendanceService,
 } from "@/services/attendanceService";
 
-import type { ApiResult } from "@/types/apiTypes";
+import type { ClientResult } from "@shared/types/apiResult.types";
 
 export async function getAttendance(
   query: AttendanceQuery
-): Promise<ApiResult<AttendanceList>> {
+): Promise<ClientResult<AttendanceList>> {
   const result = await fetchHandler({
     service: getAttendanceService,
     payload: { query },
@@ -32,7 +32,7 @@ export async function getAttendance(
 
 export async function upsertAttendance(
   list: AttendanceUpsert
-): Promise<ApiResult<undefined>> {
+): Promise<ClientResult<undefined>> {
   const result = await fetchHandler({
     service: upsertAttendanceService,
     payload: { body: list },

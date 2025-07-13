@@ -2,7 +2,10 @@ import {
   getAttendanceService,
   upsertAttendanceService,
 } from "@/services/internal/attendance.service";
-import { type AttendanceQuery, type AttendanceList } from "@shared/types";
+import {
+  type AttendanceQuery,
+  type AttendanceList,
+} from "@shared/types/domain.types";
 import { type ServiceResponse } from "@/types/server.types";
 import { isServiceSuccess } from "@/utils/controller.util";
 

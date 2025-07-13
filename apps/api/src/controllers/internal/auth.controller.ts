@@ -11,7 +11,7 @@ import type {
   UserData,
   SerialId,
 } from "@shared/validation";
-import { isChallenge } from "@shared/utils";
+import { isChallenge } from "@shared/utils/auth.util";
 import { type ServiceResponse } from "@/types/server.types";
 import { isServiceSuccess } from "@/utils/controller.util";
 

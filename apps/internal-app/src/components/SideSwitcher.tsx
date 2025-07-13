@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import { useSide } from "@/context/SideContext";
-import { Side as SideEnum } from "@shared/types";
+import { Side as SideEnum } from "@shared/types/domain.types";
 
 type SideInfo = {
   name: string;

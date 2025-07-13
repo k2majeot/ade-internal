@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { SuccessResponse, FailResponse } from "@shared/types";
+import { SuccessResponse, FailResponse } from "@shared/types/domain.types";
 
 export function responseHandler(
   req: Request,

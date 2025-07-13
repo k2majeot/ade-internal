@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { User } from "@shared/validation";
 import { getSessionUser } from "@/api/auth";
-import type { ApiResponse } from "@/types/apiTypes";
+import type { ApiResponse } from "@shared/types/apiResult.types";
 import { useAuth } from "@/hooks/useAuth";
 
 export const UserContext = createContext<{

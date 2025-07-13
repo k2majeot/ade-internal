@@ -25,6 +25,10 @@ const _ = {
     .min(3, "Username must be at least 3 characters")
     .max(20, "Username must be at most 20 characters")
     .regex(/^[a-zA-Z0-9_]+$/, "Only letters, numbers, and underscores allowed"),
+  email: z.string().email(),
+  phone: z.string().regex(/^(\+0?1\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/, {
+    message: "Invalid phone number format",
+  }),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters long")
@@ -46,6 +50,18 @@ const _ = {
     errorMap: () => ({ message: "Status is required" }),
   }),
 } as const;
+
+export const contactSchema = z.object({
+  fname: _.fname,
+  lname: _.lname,
+  email: _.email,
+  phone: _.phone,
+  message: z
+    .string()
+    .min(10, "Message is too short")
+    .max(1000, "Message is too long"),
+});
+export type Contact = z.infer<typeof contactSchema>;
 
 export const lookupsSchema = z.object({
   role: _.role,

@@ -1,6 +1,11 @@
 // create-tables.ts – schema using enums for CHECK constraints
 import { getPool } from "@/db";
-import { AttendanceStatus, Role, Status, Side } from "@shared/types";
+import {
+  AttendanceStatus,
+  Role,
+  Status,
+  Side,
+} from "@shared/types/domain.types";
 
 const pool = await getPool();
 

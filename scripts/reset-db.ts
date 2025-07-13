@@ -11,7 +11,12 @@ import {
 
 import { getPool } from "@/db";
 import config from "@/config";
-import { AttendanceStatus, Status, Role, Side } from "@shared/types";
+import {
+  AttendanceStatus,
+  Status,
+  Role,
+  Side,
+} from "@shared/types/domain.types";
 import { registerService } from "@/services/auth.service";
 
 // -----------------------------------------------------------------------------

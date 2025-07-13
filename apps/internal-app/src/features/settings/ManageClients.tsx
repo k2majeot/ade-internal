@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { ManageTable } from "@/components/ManageTable";
 import { getClients } from "@/api/client";
 import type { Client } from "@shared/validation";
-import type { ApiResponse } from "@/types/apiTypes";
+import type { ApiResponse } from "@shared/types/apiResult.types";
 import { deactivateClients, deleteClients } from "@/api/client";
 import type { SerialId } from "@shared/validation";
 import { withToast } from "@/lib/utils";

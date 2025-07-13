@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
-import { Role } from "@shared/types";
-import { hasRequiredRole } from "@shared/utils";
+import { Role } from "@shared/types/domain.types";
+import { hasRequiredRole } from "@shared/utils/auth.util";
 
 export function ProtectedRoute({
   children,

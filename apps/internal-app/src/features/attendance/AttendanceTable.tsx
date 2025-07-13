@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 
 import { cn } from "@/lib/utils";
-import { AttendanceStatus } from "@shared/types";
+import { AttendanceStatus } from "@shared/types/domain.types";
 import type { Attendance } from "@shared/validation";
 import type { AttendanceUi } from "./Attendance";
 
@@ -20,11 +20,7 @@ type Props = {
   onStatusChange: (cid: number, val: AttendanceStatus) => void;
 };
 
-export default function AttendanceTable({
-  data,
-  edit,
-  onStatusChange,
-}: Props) {
+export default function AttendanceTable({ data, edit, onStatusChange }: Props) {
   const bgColorMap: Record<AttendanceStatus, string> = {
     [AttendanceStatus.Here]: "bg-[var(--attendance-present-bg)]",
     [AttendanceStatus.Absent]: "bg-[var(--attendance-absent-bg)]",
@@ -49,34 +45,34 @@ export default function AttendanceTable({
                 {row.data.lname}, {row.data.fname}
               </TableCell>
 
-              {[AttendanceStatus.Here, AttendanceStatus.Absent, AttendanceStatus.NotScheduled].map(
-                (val) => (
-                  <TableCell
-                    key={val}
-                    className={cn(
-                      "w-1/3 cursor-pointer py-10 border-r",
-                      !edit && "pointer-events-none opacity-50",
-                      row.data.attendance_status === val
-                        ? bgColorMap[val]
-                        : "bg-transparent"
-                    )}
-                    onClick={
-                      edit
-                        ? () => onStatusChange(row.data.cid, val)
-                        : undefined
-                    }
-                  >
-                    {row.data.attendance_status === val && (
-                      <div className="flex flex-col items-center justify-center gap-2">
-                        {val === AttendanceStatus.Here && <CheckCircle />}
-                        {val === AttendanceStatus.Absent && <XCircle />}
-                        {val === AttendanceStatus.NotScheduled && <PauseCircle />}
-                        <span className="text-[9px] sm:text-sm">{val}</span>
-                      </div>
-                    )}
-                  </TableCell>
-                )
-              )}
+              {[
+                AttendanceStatus.Here,
+                AttendanceStatus.Absent,
+                AttendanceStatus.NotScheduled,
+              ].map((val) => (
+                <TableCell
+                  key={val}
+                  className={cn(
+                    "w-1/3 cursor-pointer py-10 border-r",
+                    !edit && "pointer-events-none opacity-50",
+                    row.data.attendance_status === val
+                      ? bgColorMap[val]
+                      : "bg-transparent"
+                  )}
+                  onClick={
+                    edit ? () => onStatusChange(row.data.cid, val) : undefined
+                  }
+                >
+                  {row.data.attendance_status === val && (
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      {val === AttendanceStatus.Here && <CheckCircle />}
+                      {val === AttendanceStatus.Absent && <XCircle />}
+                      {val === AttendanceStatus.NotScheduled && <PauseCircle />}
+                      <span className="text-[9px] sm:text-sm">{val}</span>
+                    </div>
+                  )}
+                </TableCell>
+              ))}
             </TableRow>
           ))
         ) : (

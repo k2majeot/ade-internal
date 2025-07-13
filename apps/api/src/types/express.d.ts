@@ -1,5 +1,5 @@
 import { ParsedQs } from "qs";
-import { type ApiResponse } from "@shared/types";
+import { type ApiResponse } from "@shared/types/domain.types";
 
 declare global {
   namespace Express {

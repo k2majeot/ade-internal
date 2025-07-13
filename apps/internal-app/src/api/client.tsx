@@ -19,9 +19,9 @@ import {
   deleteClientsService,
   createClientService,
 } from "@/services/clientService";
-import type { ApiResult } from "@/types/apiTypes";
+import type { ClientResult } from "@shared/types/apiResult.types";
 
-export async function getClient(id: SerialId): Promise<ApiResult<Client>> {
+export async function getClient(id: SerialId): Promise<ClientResult<Client>> {
   return await fetchHandler({
     service: getClientService,
     outputSchema: clientSchema,
@@ -30,7 +30,7 @@ export async function getClient(id: SerialId): Promise<ApiResult<Client>> {
   });
 }
 
-export async function getClients(): Promise<ApiResult<ClientList>> {
+export async function getClients(): Promise<ClientResult<ClientList>> {
   return await fetchHandler({
     service: getClientsService,
     outputSchema: clientListSchema,
@@ -40,7 +40,7 @@ export async function getClients(): Promise<ApiResult<ClientList>> {
 export async function updateClient(
   id: SerialId,
   clientData: ClientData
-): Promise<ApiResult<undefined>> {
+): Promise<ClientResult<undefined>> {
   return await fetchHandler({
     service: updateClientService,
     payload: { params: { id }, body: clientData },
@@ -50,7 +50,7 @@ export async function updateClient(
 
 export async function deactivateClients(
   ids: SerialId[]
-): Promise<ApiResult<undefined>> {
+): Promise<ClientResult<undefined>> {
   const result = await fetchHandler({
     service: deactivateClientsService,
     payload: { body: { ids } },
@@ -61,7 +61,7 @@ export async function deactivateClients(
 
 export async function deleteClients(
   ids: SerialIdList
-): Promise<ApiResult<undefined>> {
+): Promise<ClientResult<undefined>> {
   const result = await fetchHandler({
     service: deleteClientsService,
     payload: { body: ids },
@@ -72,7 +72,7 @@ export async function deleteClients(
 
 export async function createClient(
   clientData: ClientData
-): Promise<ApiResult<undefined>> {
+): Promise<ClientResult<undefined>> {
   return await fetchHandler({
     service: createClientService,
     payload: { body: clientData },

@@ -32,7 +32,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
 import { useUser } from "@/context/UserContext";
-import { Side } from "@shared/types";
+import { Side } from "@shared/types/domain.types";
 import NavUser from "@/components/NavUser";
 import SideSwitcher from "@/components/SideSwitcher";
 import SettingsDialog from "@/features/settings/SettingsDialog";

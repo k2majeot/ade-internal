@@ -23,11 +23,11 @@ import {
   getSessionUserService,
   resetPasswordService,
 } from "@/services/authService";
-import type { ApiResult } from "@/types/apiTypes";
+import type { ClientResult } from "@shared/types/apiResult.types";
 
 export async function login(
   creds: Credentials
-): Promise<ApiResult<LoginResult>> {
+): Promise<ClientResult<LoginResult>> {
   const result = await fetchHandler({
     service: loginService,
     payload: { body: creds },
@@ -37,7 +37,7 @@ export async function login(
   return result;
 }
 
-export async function logout(): Promise<ApiResult<undefined>> {
+export async function logout(): Promise<ClientResult<undefined>> {
   const result = await fetchHandler({
     service: logoutService,
   });
@@ -46,7 +46,7 @@ export async function logout(): Promise<ApiResult<undefined>> {
 
 export async function completeChallenge(
   data: CompleteChallenge
-): Promise<ApiResult<undefined>> {
+): Promise<ClientResult<undefined>> {
   const result = await fetchHandler({
     service: completeChallengeService,
     payload: { body: data },
@@ -57,7 +57,7 @@ export async function completeChallenge(
 
 export async function register(
   userData: UserData
-): Promise<ApiResult<undefined>> {
+): Promise<ClientResult<undefined>> {
   const result = await fetchHandler({
     service: registerService,
     payload: { body: userData },
@@ -66,7 +66,7 @@ export async function register(
   return result;
 }
 
-export async function getSessionUser(): Promise<ApiResult<User>> {
+export async function getSessionUser(): Promise<ClientResult<User>> {
   const result = await fetchHandler({
     service: getSessionUserService,
     outputSchema: userSchema,
@@ -76,7 +76,7 @@ export async function getSessionUser(): Promise<ApiResult<User>> {
 
 export async function resetPassword(
   username: Username
-): Promise<ApiResult<undefined>> {
+): Promise<ClientResult<undefined>> {
   const result = await fetchHandler({
     service: resetPasswordService,
     payload: { body: { username } },

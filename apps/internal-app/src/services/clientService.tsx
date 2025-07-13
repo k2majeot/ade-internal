@@ -1,6 +1,6 @@
 import type { RequestPayload } from "@/lib/fetchHandler";
 import type { ClientData, Client } from "@shared/validation";
-import type { SerialId } from "@/types/apiTypes";
+import type { SerialId } from "@shared/types/apiResult.types";
 
 export async function getClientService({
   params: { id },

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
-import { Role, RoleLevel } from "@shared/types";
-import { hasRequiredRole } from "@shared/utils";
+import { Role, RoleLevel } from "@shared/types/domain.types";
+import { hasRequiredRole } from "@shared/utils/auth.util";
 import { getUserService } from "@/services/internal/user.service";
 
 export async function requireAuth(req, res, next) {

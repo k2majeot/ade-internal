@@ -1,14 +1,14 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
-import type { ApiResult } from "@/types/apiTypes";
+import type { ClientResult } from "@shared/types/apiResult.types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function toastApiResult<T>(
-  res: ApiResult<T>,
+export function toastClientResult<T>(
+  res: ClientResult<T>,
   successMsg: string,
   errorMsg: string
 ): boolean {
@@ -21,12 +21,12 @@ export function toastApiResult<T>(
 }
 
 export async function withToast<T>(
-  fn: () => Promise<ApiResult<T>>,
+  fn: () => Promise<ClientResult<T>>,
   successMsg: string,
   errorMsg: string
 ): Promise<boolean> {
   const res = await fn();
-  return toastApiResult(res, successMsg, errorMsg);
+  return toastClientResult(res, successMsg, errorMsg);
 }
 
 export function emptyDefaults<T extends z.ZodObject<any>>(

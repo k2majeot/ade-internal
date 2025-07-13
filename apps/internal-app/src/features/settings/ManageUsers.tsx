@@ -3,7 +3,7 @@ import { ManageTable } from "@/components/ManageTable";
 import { getUsers, deactivateUsers, deleteUsers } from "@/api/user";
 import { resetPassword } from "@/api/auth";
 import type { User, UserList, DeleteUsers } from "@shared/validation";
-import type { ApiResponse } from "@/types/apiTypes";
+import type { ApiResponse } from "@shared/types/apiResult.types";
 import { withToast } from "@/lib/utils";
 
 const columns = [
