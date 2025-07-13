@@ -13,5 +13,9 @@ router.post(
   asyncHandler(submitContact)
 );
 
+router.get("/ping", (req, res) => {
+  res.status(200).send("pong");
+});
+
 const publicRouter = router;
 export default publicRouter;

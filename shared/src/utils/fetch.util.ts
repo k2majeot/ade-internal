@@ -71,7 +71,12 @@ export async function fetchHandler<B, Q, P, T>({
     }
 
     const contentType = response.headers.get("Content-Type") || "";
-    if (!contentType.includes("application/json")) {
+    const isJson = contentType.includes("application/json");
+
+    if (!isJson) {
+      if (!outputSchema) {
+        return { success: true };
+      }
       return {
         success: false,
         message: "Expected JSON response but got something else",
@@ -79,7 +84,7 @@ export async function fetchHandler<B, Q, P, T>({
     }
 
     const json = await response.json().catch(() => null);
-    if (!json) {
+    if (!json && outputSchema) {
       return { success: false, message: "Malformed JSON" };
     }
 

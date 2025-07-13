@@ -1,4 +1,4 @@
-import { fetchHandler } from "@/lib/fetchHandler";
+import { fetchHandler } from "@shared/utils/fetch.util";
 import type {
   SerialId,
   Client,

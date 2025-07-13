@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Role, AttendanceStatus, Status, Side } from "./types";
+import { Role, AttendanceStatus, Status, Side } from "./types/domain.types";
 import { format } from "date-fns";
 
 const _ = {
