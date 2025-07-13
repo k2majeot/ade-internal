@@ -304,12 +304,7 @@
             <a href="faq.html">FAQ</a>.
           </h3>
         </div>
-        <form
-          id="contact-form"
-          action="https://api.adexperiences.com/public/contact"
-          method="POST"
-          novalidate
-        >
+        <form id="contact-form" novalidate>
           <div class="row align-items-stretch mb-5">
             <div class="col-md-6">
               <div class="form-group">
@@ -372,11 +367,18 @@
           </div>
           <div class="text-center">
             <button
-              class="btn btn-primary btn-xl text-uppercase"
+              class="btn btn-primary btn-xl text-uppercase d-flex align-items-center justify-content-center gap-2"
               id="contact-form-submit"
               type="submit"
             >
-              Send Message
+              <span class="submit-text">Send Message</span>
+              <div
+                class="spinner-border spinner-border-sm text-light submit-spinner"
+                role="status"
+                style="display: none"
+              >
+                <span class="visually-hidden">Loading...</span>
+              </div>
             </button>
           </div>
         </form>
@@ -534,6 +536,7 @@
     <!-- Bootstrap core JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS -->
+    <script src="js/contact.js"></script>
     <script src="js/scripts.js"></script>
   </body>
 </html>
