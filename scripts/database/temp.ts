@@ -1,4 +1,4 @@
-import { getPool } from "@/db";
+import { getPool } from "../apps/api/src/db";
 
 async function clearAllSessions() {
   const pool = await getPool();

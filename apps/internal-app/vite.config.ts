@@ -19,7 +19,7 @@ export default defineConfig({
     port: 5173,
     allowedHosts: ["internal.adexperiences.com"],
     proxy: {
-      "/api": "http://localhost:3000",
+      "/api": "https://api.adexperiences.com",
     },
     fs: {
       allow: [path.resolve(__dirname), path.resolve(__dirname, "../../shared")],

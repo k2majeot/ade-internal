@@ -3,7 +3,7 @@ import connectPgSimple from "connect-pg-simple";
 import express from "express";
 import session from "express-session";
 import cors from "cors";
-import morgan from "morgan"; // ✅ add this
+import morgan from "morgan";
 import internalRouter from "@/routes/internal.routes";
 import publicRouter from "@/routes/public.routes";
 import {
@@ -17,15 +17,16 @@ const PgSession = connectPgSimple(session);
 
 const app = express();
 
-// ✅ basic HTTP logging
-app.use(morgan("dev")); // logs method, url, status, response time
+app.use(morgan("dev"));
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+const publicCors = cors({
+  origin: "https://temp.adexperiences.com",
+});
+
+const internalCors = cors({
+  origin: "https://internal.adexperiences.com",
+  credentials: true,
+});
 
 app.use(express.json());
 
@@ -41,16 +42,17 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: config.session.duration,
-      secure: false,
       httpOnly: true,
+      sameSite: "none",
+      secure: true,
     },
   })
 );
 
 app.use(responseHandler);
 
-app.use("/api", internalRouter);
-app.use("/public", publicRouter);
+app.use("/api", internalCors, internalRouter);
+app.use("/public", publicCors, publicRouter);
 
 app.use(errorHandler);
 
