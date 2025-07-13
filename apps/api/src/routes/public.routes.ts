@@ -2,7 +2,7 @@ import express from "express";
 import asyncHandler from "express-async-handler";
 
 import validationHandler from "@/middleware/validation.middleware";
-import { submitContact } from "@/controllers/public/contact.controller";
+import { submitContact } from "@/controllers/public/public.controller";
 import { contactSchema } from "@shared/validation";
 
 const router = express.Router();

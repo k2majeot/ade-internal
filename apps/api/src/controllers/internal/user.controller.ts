@@ -4,7 +4,7 @@ import {
   updateUserService,
   deactivateUsersService,
   deleteUsersService,
-} from "@/services/user.service";
+} from "@/services/internal/user.service";
 import type {
   SerialId,
   User,

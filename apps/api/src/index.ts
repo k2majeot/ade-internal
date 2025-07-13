@@ -43,7 +43,7 @@ app.use(
 app.use(responseHandler);
 
 app.use("/api", internalRouter);
-app.use("/public" publicRouter);
+app.use("/public", publicRouter);
 
 app.use(errorHandler);
 

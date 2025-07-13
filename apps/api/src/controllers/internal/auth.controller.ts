@@ -2,8 +2,8 @@ import {
   loginService,
   completeChallengeService,
   registerService,
-} from "@/services/auth.service";
-import { getUserService } from "@/services/user.service";
+} from "@/services/internal/auth.service";
+import { getUserService } from "@/services/internal/user.service";
 import type {
   Credentials,
   User,

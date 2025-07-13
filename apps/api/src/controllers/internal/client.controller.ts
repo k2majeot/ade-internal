@@ -3,7 +3,7 @@ import {
   getClientsService,
   updateClientService,
   createClientService,
-} from "@/services/client.service";
+} from "@/services/internal/client.service";
 
 import type {
   SerialId,
