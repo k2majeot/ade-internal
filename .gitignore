@@ -5,9 +5,10 @@ node_modules/
 dist/
 build/
 dist-ssr/
-*.tsbuildinfo
 .cache/
 .vite/
+.astro/
+*.tsbuildinfo
 
 # === Logs ===
 logs/
@@ -23,11 +24,9 @@ lerna-debug.log*
 .env.*
 *.pem
 
-# === OS Junk ===
+# === OS / Editor Junk ===
 .DS_Store
 Thumbs.db
-
-# === Editor Settings ===
 .vscode/
 .idea/
 *.suo
@@ -40,6 +39,6 @@ Thumbs.db
 coverage/
 .nyc_output/
 
-# === Optional: lockfiles (if using a unified one in root) ===
+# === Optional Lockfiles (uncomment if managing with root lockfile) ===
 # package-lock.json
 # yarn.lock

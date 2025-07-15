@@ -1,10 +1,10 @@
 import { ZodError } from "zod";
-import { applicationSchema } from "@shared/validation";
-import config from "@/js/config";
+import { contactSchema } from "@shared/validation";
+import config from "@/scripts/config";
 
 document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("application-form");
-  const submitBtn = form?.querySelector('button[type="submit"]');
+  const form = document.getElementById("contact-form");
+  const submitBtn = document.getElementById("contact-form-submit");
   const spinner = submitBtn?.querySelector(".submit-spinner");
   const submitText = submitBtn?.querySelector(".submit-text");
 
@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function showError(fieldName, message) {
     const input = form.querySelector(`[name="${fieldName}"]`);
     const feedback = input?.nextElementSibling;
+
     if (input && feedback && feedback.classList.contains("invalid-feedback")) {
       input.classList.add("is-invalid");
       feedback.textContent = message;
@@ -34,17 +35,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const formData = new FormData(form);
 
-    const application = {
+    const contact = {
       fname: formData.get("fname"),
       lname: formData.get("lname"),
       email: formData.get("email"),
       phone: formData.get("phone"),
       message: formData.get("message"),
-      file: formData.get("file"),
     };
 
     try {
-      applicationSchema.parse(application);
+      contactSchema.parse(contact);
     } catch (err) {
       if (err instanceof ZodError) {
         err.errors.forEach((e) => {
@@ -56,13 +56,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     submitBtn.disabled = true;
-    spinner?.style.setProperty("display", "inline-block");
-    submitText?.style.setProperty("display", "none");
+    spinner.style.display = "inline-block";
+    submitText.style.display = "none";
 
     try {
-      const response = await fetch(`${config.apiUrl}/public/apply`, {
+      const response = await fetch(`${config.apiUrl}/public/contact`, {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contact),
       });
 
       if (!response.ok) {
@@ -72,12 +73,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
       form.reset();
     } catch (err) {
-      console.error("Error sending application:", err);
+      console.error("Error sending message:", err);
       showError("message", "Something went wrong. Please try again.");
     } finally {
       submitBtn.disabled = false;
-      spinner?.style.setProperty("display", "none");
-      submitText?.style.setProperty("display", "inline-block");
+      spinner.style.display = "none";
+      submitText.style.display = "inline-block";
     }
   });
 });

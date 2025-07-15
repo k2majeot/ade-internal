@@ -1,6 +1,6 @@
 import { ZodError } from "zod";
 import { applicationSchema } from "@shared/validation";
-import config from "@/js/config";
+import config from "@/scripts/config";
 
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("application-form");
@@ -40,11 +40,13 @@ document.addEventListener("DOMContentLoaded", function () {
       email: formData.get("email"),
       phone: formData.get("phone"),
       message: formData.get("message"),
-      file: formData.get("file"),
     };
+
+    const files = formData.getAll("files");
 
     try {
       applicationSchema.parse(application);
+      applicationFilesSchema.parse({ files });
     } catch (err) {
       if (err instanceof ZodError) {
         err.errors.forEach((e) => {

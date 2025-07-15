@@ -49,6 +49,20 @@ const config = {
     internalOrigin: required("APP_URL"),
     publicOrigin: required("WEBSITE_URL"),
   },
+
+  ses: {
+    region: required("SMTP_REGION"),
+    host: required("SMTP_HOST"),
+    port: Number(required("SMTP_PORT")),
+    user: required("SMTP_USERNAME"),
+    password: required("SMTP_PSWD"),
+    sender: required("EMAIL_SENDER"),
+    recipient: required("EMAIL_RECIPIENT"),
+  },
+  s3: {
+    region: required("S3_REGION"),
+    bucket: required("S3_BUCKET"),
+  },
 };
 
 export default config;

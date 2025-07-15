@@ -4,14 +4,17 @@ import { format } from "date-fns";
 
 const _ = {
   serialId: z.coerce.number().int().positive(),
-  date: z.preprocess((val) => {
-    if (typeof val === "string" || val instanceof Date) {
-      const parsed = new Date(val);
-      if (isNaN(parsed.getTime())) return undefined;
-      return format(parsed, "yyyy-MM-dd");
-    }
-    return undefined;
-  }, z.string().regex(/^\d{4}-\d{2}-\d{2}$/)),
+  date: z.preprocess(
+    (val) => {
+      if (typeof val === "string" || val instanceof Date) {
+        const parsed = new Date(val);
+        if (isNaN(parsed.getTime())) return undefined;
+        return format(parsed, "yyyy-MM-dd");
+      }
+      return undefined;
+    },
+    z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
+  ),
   fname: z
     .string()
     .min(1, "First name is required")
@@ -51,6 +54,37 @@ const _ = {
   status: z.nativeEnum(Status, {
     errorMap: () => ({ message: "Status is required" }),
   }),
+  document: z
+    .instanceof(File)
+    .refine((file) => file.size > 0, "File is required")
+    .refine((file) => file.size < 5 * 1024 * 1024, "File must be under 5MB")
+    .refine(
+      (file) =>
+        [
+          "application/pdf",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ].includes(file.type),
+      "Only PDF, DOC, or DOCX files are allowed"
+    ),
+  multerDocument: z.object({
+    originalname: z.string(),
+    mimetype: z
+      .string()
+      .refine(
+        (type) =>
+          type === "application/pdf" ||
+          type === "application/msword" ||
+          type ===
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "Only PDF, DOC, or DOCX files are allowed"
+      ),
+    size: z
+      .number()
+      .min(1)
+      .max(5 * 1024 * 1024),
+    buffer: z.instanceof(Buffer),
+  }),
 } as const;
 
 export const contactSchema = z.object({
@@ -64,6 +98,26 @@ export const contactSchema = z.object({
     .max(1000, "Message is too long"),
 });
 export type Contact = z.infer<typeof contactSchema>;
+
+export const applicationSchema = z.object({
+  fname: _.fname,
+  lname: _.lname,
+  email: _.email,
+  phone: _.phone,
+  message: z
+    .string()
+    .min(10, "Message is too short")
+    .max(1000, "Message is too long"),
+});
+export type Application = z.infer<typeof applicationSchema>;
+
+export const applicationFilesSchema = z.object({
+  files: z.array(_.document).min(1, "At least one document must be uploaded"),
+});
+export type ApplicationFiles = z.infer<typeof applicationFilesSchema>;
+
+export const multerArraySchema = z.array(_.multerDocument);
+export type MulterArray = z.infer<typeof multerArraySchema>;
 
 export const lookupsSchema = z.object({
   role: _.role,

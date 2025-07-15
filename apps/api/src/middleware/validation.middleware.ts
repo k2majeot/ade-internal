@@ -5,6 +5,8 @@ type SourceValidation = {
   body?: ZodSchema;
   query?: ZodSchema;
   params?: ZodSchema;
+  file?: ZodSchema;
+  files?: ZodSchema;
 };
 
 export default function validationHandler(sources: SourceValidation) {
@@ -25,6 +27,8 @@ export default function validationHandler(sources: SourceValidation) {
       if (source === "body") req.validatedBody = result.data;
       if (source === "query") req.validatedQuery = result.data;
       if (source === "params") req.validatedParams = result.data;
+      if (source === "file") req.validatedFile = result.data;
+      if (source === "files") req.validatedFiles = result.data;
     }
 
     next();
