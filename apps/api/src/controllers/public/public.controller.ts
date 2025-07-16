@@ -2,7 +2,8 @@ import {
   submitContactService,
   submitApplicationService,
 } from "@/services/public/public.service";
-import type { Contact, Application, MulterArray } from "@shared/validation";
+import type { Contact, Application } from "@shared/validation";
+import type { MulterArray } from "@/validation/server.validation";
 import { type ServiceResponse } from "@/types/server.types";
 import { isServiceSuccess } from "@/utils/controller.util";
 

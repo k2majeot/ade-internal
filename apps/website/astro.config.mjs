@@ -2,10 +2,11 @@ import { defineConfig } from "astro/config";
 import path from "path";
 
 const sharedPath = path.resolve(
-  new URL("../../shared", import.meta.url).pathname
+  new URL("../../shared", import.meta.url).pathname,
 );
 
 export default defineConfig({
+  trailingSlash: "never",
   vite: {
     resolve: {
       alias: {

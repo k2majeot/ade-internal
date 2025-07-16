@@ -1,5 +1,6 @@
 import { getPool } from "@/db";
-import type { Contact, Application, MulterArray } from "@shared/validation";
+import type { Contact, Application } from "@shared/validation";
+import type { MulterArray } from "@/validation/server.validation";
 import type { ServiceResponse } from "@/types/server.types";
 import { createSuccess } from "@/utils/service.util";
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";

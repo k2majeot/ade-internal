@@ -5960,7 +5960,7 @@ fieldset:disabled .btn {
 }
 
 .modal-body .form-control {
-  color: #fff;
+  color: var(--bs-body-color);
   border: 1px solid #ced4da;
   padding: 1.25rem;
   height: auto; /* Consistent height */

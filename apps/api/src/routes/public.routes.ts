@@ -1,15 +1,16 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
+import multer from "multer";
 
 import validationHandler from "@/middleware/validation.middleware";
 import {
   submitContact,
   submitApplication,
 } from "@/controllers/public/public.controller";
-import { contactSchema, multerArraySchema } from "@shared/validation";
+import { contactSchema, applicationSchema } from "@shared/validation";
+import { multerArraySchema } from "@/validation/server.validation";
 
 const router = express.Router();
-
 const upload = multer();
 
 router.post(

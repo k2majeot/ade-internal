@@ -1,5 +1,5 @@
 import { ZodError } from "zod";
-import { applicationSchema } from "@shared/validation";
+import { applicationSchema, applicationFilesSchema } from "@shared/validation";
 import config from "@/scripts/config";
 
 document.addEventListener("DOMContentLoaded", function () {
