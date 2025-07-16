@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "astro": "^5.11.1",
+    "date-fns": "^4.1.0",
     "zod": "^3.25.28"
   },
   "devDependencies": {
