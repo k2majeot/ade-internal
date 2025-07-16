@@ -1,6 +1,9 @@
 import { ZodError } from "zod";
-import { applicationSchema, applicationFilesSchema } from "@shared/validation";
-import config from "@/scripts/config";
+import {
+  applicationSchema,
+  applicationFilesSchema,
+} from "../../../../shared/src/validation";
+import config from "./config";
 
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("application-form");

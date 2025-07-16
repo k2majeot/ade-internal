@@ -1,6 +1,6 @@
 import { ZodError } from "zod";
-import { contactSchema } from "@shared/validation";
-import config from "@/scripts/config";
+import { contactSchema } from "../../../../shared/src/validation";
+import config from "./config";
 
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("contact-form");

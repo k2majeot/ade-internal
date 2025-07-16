@@ -3,13 +3,25 @@ function scroll(target) {
   target.scrollIntoView({ behavior: "smooth" });
 }
 
+function activateAccordionButton(target) {
+  if (!target) return;
+  const btn = target.classList.contains("accordion-button")
+    ? target
+    : target.querySelector(".accordion-button");
+  if (btn && btn.classList.contains("collapsed")) {
+    btn.click();
+  }
+}
+
 function navigate(page, elementId = null) {
   const currentPath = window.location.pathname;
 
   if (currentPath !== page) {
     window.location.href = elementId ? `${page}#${elementId}` : page;
   } else if (elementId) {
-    scroll(document.getElementById(elementId));
+    const target = document.getElementById(elementId);
+    scroll(target);
+    activateAccordionButton(target);
   }
 }
 
@@ -19,6 +31,7 @@ function scrollToHash() {
     const target = document.querySelector(hash);
     if (target) {
       scroll(target);
+      activateAccordionButton(target);
     }
   }
 }

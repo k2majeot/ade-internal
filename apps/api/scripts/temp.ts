@@ -17,6 +17,5 @@ async function listAllContacts() {
     await pool.end();
   }
 }
-console.log("test cloudflare pages watch");
 
 listAllContacts();

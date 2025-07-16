@@ -9,7 +9,7 @@ set -e
 
 # Path to your built static files
 SOURCE_DIR="/home/ubuntu/my-app/apps/website/dist"
-TARGET_DIR="/var/www/adexperiences.com"
+TARGET_DIR="/var/www/temp.adexperiences.com"
 
 echo "Deploying site to $TARGET_DIR..."
 
