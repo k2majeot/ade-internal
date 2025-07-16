@@ -5,5 +5,8 @@
   "workspaces": [
     "apps/*",
     "shared"
-  ]
+  ],
+  "devDependencies": {
+    "depcheck": "^1.4.7"
+  }
 }
