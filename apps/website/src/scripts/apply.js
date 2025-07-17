@@ -4,6 +4,7 @@ import {
   applicationFilesSchema,
 } from "../../../../shared/src/validation";
 import config from "./config";
+import { showToast } from "./toast";
 
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("application-form");
@@ -72,13 +73,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!response.ok) {
         showError("message", "Something went wrong. Please try again.");
+        showToast("Failed to submit application. Please try again.", "error");
         return;
       }
 
       form.reset();
+      const modalElement = document.getElementById("applyModal");
+      const applyModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+      applyModal.hide();
+      showToast("Application submitted successfully!", "success");
     } catch (err) {
       console.error("Error sending application:", err);
       showError("message", "Something went wrong. Please try again.");
+      showToast("An unexpected error occurred. Please try again.", "error");
     } finally {
       submitBtn.disabled = false;
       spinner?.style.setProperty("display", "none");

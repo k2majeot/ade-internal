@@ -1,6 +1,7 @@
 import { ZodError } from "zod";
 import { contactSchema } from "../../../../shared/src/validation";
 import config from "./config";
+import { showToast } from "./toast";
 
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("contact-form");
@@ -22,7 +23,6 @@ document.addEventListener("DOMContentLoaded", function () {
   function showError(fieldName, message) {
     const input = form.querySelector(`[name="${fieldName}"]`);
     const feedback = input?.nextElementSibling;
-
     if (input && feedback && feedback.classList.contains("invalid-feedback")) {
       input.classList.add("is-invalid");
       feedback.textContent = message;
@@ -56,8 +56,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     submitBtn.disabled = true;
-    spinner.style.display = "inline-block";
-    submitText.style.display = "none";
+    spinner?.style.setProperty("display", "inline-block");
+    submitText?.style.setProperty("display", "none");
 
     try {
       const response = await fetch(`${config.apiUrl}/public/contact`, {
@@ -68,17 +68,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!response.ok) {
         showError("message", "Something went wrong. Please try again.");
+        showToast("Failed to send message. Please try again.", "error");
         return;
       }
 
       form.reset();
+      clearErrors();
+      showToast("Message sent successfully!", "success");
     } catch (err) {
       console.error("Error sending message:", err);
       showError("message", "Something went wrong. Please try again.");
+      showToast("An unexpected error occurred. Please try again.", "error");
     } finally {
       submitBtn.disabled = false;
-      spinner.style.display = "none";
-      submitText.style.display = "inline-block";
+      spinner?.style.setProperty("display", "none");
+      submitText?.style.setProperty("display", "inline-block");
     }
   });
 });
