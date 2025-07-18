@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { SuccessResponse, FailResponse } from "@shared/types/domain.types";
+import { SuccessResponse, FailResponse } from "@shared/validation";
 
 export function responseHandler(
   req: Request,
@@ -50,5 +50,5 @@ export function errorHandler(
   next: NextFunction
 ) {
   console.error("Uncaught Error:", err);
-  return res.fail({ status: 500, message: "Internal server error" });
+  res.fail({ status: 500, message: "Internal server error" });
 }

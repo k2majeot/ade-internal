@@ -125,12 +125,12 @@ export const credentialsSchema = z.object({
 });
 export type Credentials = z.infer<typeof credentialsSchema>;
 
-const challengeSchema = z.object({
+export const challengeSchema = z.object({
   challenge: z.string(),
   session: z.string(),
   username: _.username,
 });
-type Challenge = z.infer<typeof challengeSchema>;
+export type Challenge = z.infer<typeof challengeSchema>;
 
 export const completeChallengeSchema = z.object({
   username: _.username,
@@ -178,7 +178,7 @@ export const attendanceQuerySchema = z.object({
   date: _.date,
   side: _.side,
 });
-export type AttendaneQuery = z.infer<typeof attendanceQuerySchema>;
+export type AttendanceQuery = z.infer<typeof attendanceQuerySchema>;
 
 export const attendanceSchema = z.object({
   cid: _.serialId,
@@ -245,6 +245,7 @@ export const apiResponseSchema = z.discriminatedUnion("success", [
   z.object({
     success: z.literal(true),
     data: z.any(),
+    message: z.string().optional(),
   }),
   z.object({
     success: z.literal(false),
@@ -252,4 +253,7 @@ export const apiResponseSchema = z.discriminatedUnion("success", [
     errors: z.string().optional(),
   }),
 ]);
+
 export type ApiResponse<T> = z.infer<typeof apiResponseSchema>;
+export type SuccessResponse<T> = Extract<ApiResponse<T>, { success: true }>;
+export type FailResponse = Extract<ApiResponse<any>, { success: false }>;

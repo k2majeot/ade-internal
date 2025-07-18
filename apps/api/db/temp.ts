@@ -1,21 +1,21 @@
 import { getPool } from "@/db";
 
-async function listAllContacts() {
+async function listAllApplications() {
   const pool = await getPool();
 
   try {
     const { rows } = await pool.query(`
       SELECT id, fname, lname, email, phone, message, created_at
-      FROM contact
+      FROM application
       ORDER BY created_at DESC
     `);
-    console.log(`📋 Found ${rows.length} contacts:`);
+    console.log(`📋 Found ${rows.length} applications:`);
     console.table(rows);
   } catch (err: any) {
-    console.error("❌ Error querying contacts:", err.message);
+    console.error("❌ Error querying application table:", err.message);
   } finally {
     await pool.end();
   }
 }
 
-listAllContacts();
+listAllApplications();

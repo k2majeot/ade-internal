@@ -43,8 +43,8 @@ app.use(
     cookie: {
       maxAge: config.session.duration,
       httpOnly: true,
-      sameSite: "none",
-      secure: true,
+      sameSite: config.env === "production" ? "none" : "lax",
+      secure: config.env === "production",
     },
   })
 );

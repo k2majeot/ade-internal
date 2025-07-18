@@ -1,4 +1,5 @@
-import { getPool } from "../db.js";
+/*
+import { getPool } from "@/db.js";
 
 export async function getGoalDataService(gid: string, date: string) {
   const pool = await getPool();
@@ -39,3 +40,4 @@ export async function upsertGoalDataService(data: {
 
   return result.rows[0] ?? {};
 }
+  */

@@ -6,6 +6,7 @@ import { getPool } from "@/db";
 import type {
   UserData,
   UserList,
+  User,
   SerialId,
   DeleteUsers,
 } from "@shared/validation";
@@ -67,29 +68,6 @@ export async function updateUserService(
 
   if (result.rowCount === 0) {
     return createFail({ status: 404, message: "User not found" });
-  }
-
-  return createSuccess({ status: 204 });
-}
-
-export async function deactivateUsersService(
-  ids: SerialId[]
-): Promise<ServiceResponse<undefined>> {
-  const pool = await getPool();
-
-  const result = await pool.query(
-    `UPDATE users SET status = $1 WHERE id = ANY($2)`,
-    [Status.Deactivated, ids]
-  );
-
-  if (result.rowCount === 0) {
-    return createFail({ status: 404, message: "No users found to deactivate" });
-  }
-  if (result.rowCount < ids.length) {
-    return createFail({
-      status: 207,
-      message: "Some users were not found to deactivate",
-    });
   }
 
   return createSuccess({ status: 204 });

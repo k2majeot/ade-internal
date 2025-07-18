@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { fetchHandler } from "@shared/utils/fetch.util";
+import { fetchHandler } from "@/lib/fetchHandler";
 import type {
   SerialId,
   UserData,

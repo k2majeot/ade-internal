@@ -17,7 +17,6 @@ import {
   getUser,
   getUsers,
   updateUser,
-  deactivateUsers,
   deleteUsers,
 } from "@/controllers/internal/user.controller";
 
@@ -86,14 +85,6 @@ router.get(
   asyncHandler(requireAuth),
   requireAtLeast(Role.Admin),
   asyncHandler(getUsers)
-);
-
-router.post(
-  "/users/deactivate",
-  validationHandler({ body: serialIdListSchema }),
-  asyncHandler(requireAuth),
-  requireAtLeast(Role.Admin),
-  asyncHandler(deactivateUsers)
 );
 
 router.delete(

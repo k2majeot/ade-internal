@@ -5,11 +5,12 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const env = process.env.NODE_ENV || "development";
 
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({ path: path.resolve(__dirname, `../.env`) });
 dotenv.config({ path: path.resolve(__dirname, `../.env.local`) });
+dotenv.config({ path: path.resolve(__dirname, `../.env.${env}`) });
 dotenv.config({ path: path.resolve(__dirname, `../.env.${env}.local`) });
 
-function required(key) {
+function required(key: string) {
   const value = process.env[key];
   if (!value) {
     throw new Error(`Missing required environment variable: ${key}`);
@@ -21,7 +22,7 @@ const config = {
   env: env,
 
   server: {
-    port: required("SERVER_PORT"),
+    port: required("API_PORT"),
   },
 
   session: {

@@ -1,5 +1,5 @@
 import { ZodType } from "zod";
-import { apiResponseSchema, type ApiResponse } from "..//validation";
+import { apiResponseSchema, type ApiResponse } from "../validation";
 import type { FetchResult } from "../types/apiResult.types";
 
 export type RequestPayload<B = undefined, Q = undefined, P = undefined> = {

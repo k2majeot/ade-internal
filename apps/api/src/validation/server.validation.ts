@@ -7,10 +7,11 @@ const _ = {
       .string()
       .refine(
         (type) =>
-          type === "application/pdf" ||
-          type === "application/msword" ||
-          type ===
+          [
+            "application/pdf",
+            "application/msword",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          ].includes(type),
         "Only PDF, DOC, or DOCX files are allowed"
       ),
     size: z
@@ -22,4 +23,3 @@ const _ = {
 } as const;
 
 export const multerArraySchema = z.array(_.multerDocument);
-export type MulterArray = z.infer<typeof multerArraySchema>;

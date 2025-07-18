@@ -1,12 +1,15 @@
 import { ParsedQs } from "qs";
-import { type ApiResponse } from "@shared/types/domain.types";
+import { type ApiResponse } from "@shared/validation";
+import { Express } from "express";
 
 declare global {
   namespace Express {
     interface Request {
-      validatedBody?: any;
+      validatedBody?: Record<string, any>;
       validatedQuery?: ParsedQs;
-      validatedParams?: any;
+      validatedParams?: Record<string, SerialId>;
+      validatedFile?: Express.Multer.File;
+      validatedFiles?: Express.Multer.File[];
       user?: User;
     }
 

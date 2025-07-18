@@ -9,8 +9,12 @@ import {
 import { getPool } from "@/db";
 import config from "@/config";
 import { Status, Side } from "@shared/types/domain.types";
-import type { Credentials, AuthResult, UserData } from "@shared/validation";
-import { createUserService } from "@/services/user.service";
+import type {
+  Credentials,
+  UserData,
+  LoginResult,
+  CompleteChallenge,
+} from "@shared/validation";
 import { type ServiceResponse } from "@/types/server.types";
 import { createSuccess, createFail } from "@/utils/service.util";
 
@@ -18,7 +22,7 @@ const cognitoClient = new CognitoIdentityProviderClient({
   region: config.cognito.region,
 });
 
-async function decodeJwtPayload(token: string): any {
+async function decodeJwtPayload(token: string): Promise<any> {
   const base64Url = token.split(".")[1];
   const payloadJson = Buffer.from(base64Url, "base64").toString("utf8");
   return JSON.parse(payloadJson);
@@ -56,6 +60,9 @@ export async function loginService({
   }
 
   if (response.ChallengeName) {
+    if (!response.Session) {
+      throw new Error("Challenge response missing session");
+    }
     return createSuccess({
       data: {
         challenge: response.ChallengeName,
@@ -166,7 +173,7 @@ export async function registerService(
 
     await client.query("COMMIT");
     return createSuccess({ status: 201 });
-  } catch (err) {
+  } catch (err: any) {
     await client.query("ROLLBACK");
 
     if (err.code === "23505") {

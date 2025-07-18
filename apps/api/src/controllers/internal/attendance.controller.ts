@@ -2,40 +2,50 @@ import {
   getAttendanceService,
   upsertAttendanceService,
 } from "@/services/internal/attendance.service";
-import {
-  type AttendanceQuery,
-  type AttendanceList,
-} from "@shared/types/domain.types";
+import type {
+  AttendanceQuery,
+  AttendanceList,
+  AttendanceUpsert,
+} from "@shared/validation";
 import { type ServiceResponse } from "@/types/server.types";
 import { isServiceSuccess } from "@/utils/controller.util";
+import { Request, Response } from "express";
 
-export async function getAttendance(req, res) {
-  const query: AttendanceQuery = req.validatedQuery;
+export async function getAttendance(req: Request, res: Response) {
+  if (!req.validatedQuery) throw new Error("validatedQuery missing");
+
+  const query = req.validatedQuery as AttendanceQuery;
   const serviceResponse: ServiceResponse<AttendanceList> =
     await getAttendanceService(query);
 
   if (!isServiceSuccess(serviceResponse)) {
-    return res.fail({
+    res.fail({
       status: serviceResponse.status,
       errors: serviceResponse.errors,
       message: serviceResponse.message,
     });
+    return;
   }
-  return res.success({
+  res.success({
     data: serviceResponse.data,
     message: serviceResponse.message,
   });
 }
 
-export async function upsertAttendance(req, res) {
+export async function upsertAttendance(req: Request, res: Response) {
+  if (!req.validatedBody) throw new Error("validatedBody missing");
+
+  const list = req.validatedBody as AttendanceUpsert;
   const serviceResponse: ServiceResponse<undefined> =
-    await upsertAttendanceService(req.validatedBody);
+    await upsertAttendanceService(list);
+
   if (!isServiceSuccess(serviceResponse)) {
-    return res.fail({
+    res.fail({
       status: serviceResponse.status,
       errors: serviceResponse.errors,
       message: serviceResponse.message,
     });
+    return;
   }
-  return res.status(serviceResponse.status).end();
+  res.status(serviceResponse.status).end();
 }

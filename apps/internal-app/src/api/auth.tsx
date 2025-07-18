@@ -1,4 +1,4 @@
-import { fetchHandler } from "@shared/utils/fetch.util";
+import { fetchHandler } from "@/lib/fetchHandler";
 import type {
   Credentials,
   LoginResult,
@@ -6,6 +6,7 @@ import type {
   CompleteChallenge,
   User,
   Username,
+  CompleteChallenge,
 } from "@shared/validation";
 import {
   credentialsSchema,

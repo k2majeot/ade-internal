@@ -17,11 +17,12 @@ export default function validationHandler(sources: SourceValidation) {
 
       const result = schema.safeParse(req[source]);
       if (!result.success) {
-        return res.fail({
+        res.fail({
           status: 400,
           message: `${source} validation failed`,
           errors: result.error.format(),
         });
+        return;
       }
 
       if (source === "body") req.validatedBody = result.data;

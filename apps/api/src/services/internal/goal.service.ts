@@ -1,4 +1,5 @@
-import { getPool } from "../db.js";
+/*
+import { getPool } from "@/db.js";
 
 export async function getGoalsService(cid: string, title?: string) {
   let query = `
@@ -43,3 +44,4 @@ export async function updateGoalService(goal: {
 
   return result.rows[0] ?? null;
 }
+*/

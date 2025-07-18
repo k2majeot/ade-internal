@@ -1,6 +1,6 @@
 import { getPool } from "@/db";
 import type { Contact, Application } from "@shared/validation";
-import type { MulterArray } from "@/validation/server.validation";
+import { Express } from "express";
 import type { ServiceResponse } from "@/types/server.types";
 import { createSuccess } from "@/utils/service.util";
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
@@ -29,8 +29,10 @@ export async function submitContactService({
 
 export async function submitApplicationService(
   { fname, lname, email, phone, message }: Application,
-  files: MulterArray
+  files: Express.Multer.File[]
 ): Promise<ServiceResponse<undefined>> {
+  const pool = await getPool();
+
   await Promise.all(
     files.map((file) =>
       s3.send(
@@ -43,13 +45,11 @@ export async function submitApplicationService(
       )
     )
   );
-  /*
+
   await ses.send(
     new SendEmailCommand({
       Source: config.ses.sender,
-      Destination: {
-        ToAddresses: [config.ses.recipient],
-      },
+      Destination: { ToAddresses: [config.ses.recipient] },
       Message: {
         Subject: { Data: "New Application Submitted" },
         Body: {
@@ -62,6 +62,11 @@ export async function submitApplicationService(
       },
     })
   );
-  */
+
+  await pool.query(
+    `INSERT INTO application (fname, lname, email, phone, message) VALUES ($1, $2, $3, $4, $5)`,
+    [fname, lname, email, phone, message]
+  );
+
   return createSuccess({ status: 201 });
 }

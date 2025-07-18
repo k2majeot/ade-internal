@@ -13,77 +13,88 @@ import type {
 } from "@shared/validation";
 import type { ServiceResponse } from "@/types/server.types";
 import { isServiceSuccess } from "@/utils/controller.util";
+import { Request, Response } from "express";
 
-export async function getClient(req, res) {
-  const { id }: SerialId = req.validatedParams;
+export async function getClient(req: Request, res: Response) {
+  if (!req.validatedParams) throw new Error("validatedParams missing");
+
+  const { id } = req.validatedParams as { id: SerialId };
   const serviceResponse: ServiceResponse<Client> = await getClientService(id);
 
   if (!isServiceSuccess(serviceResponse)) {
-    return res.fail({
+    res.fail({
       status: serviceResponse.status,
       errors: serviceResponse.errors,
       message: serviceResponse.message,
     });
+    return;
   }
 
-  return res.success({
+  res.success({
     status: serviceResponse.status,
     data: serviceResponse.data,
     message: serviceResponse.message,
   });
 }
 
-export async function getClients(req, res) {
+export async function getClients(req: Request, res: Response) {
   const serviceResponse: ServiceResponse<ClientList> =
     await getClientsService();
 
   if (!isServiceSuccess(serviceResponse)) {
-    return res.fail({
+    res.fail({
       status: serviceResponse.status,
       errors: serviceResponse.errors,
       message: serviceResponse.message,
     });
+    return;
   }
 
-  return res.success({
+  res.success({
     status: serviceResponse.status,
     data: serviceResponse.data,
     message: serviceResponse.message,
   });
 }
 
-export async function updateClient(req, res) {
-  const { id }: SerialId = req.validatedParams;
-  const clientData: ClientData = req.validatedBody;
+export async function updateClient(req: Request, res: Response) {
+  if (!req.validatedParams) throw new Error("validatedParams missing");
+  if (!req.validatedBody) throw new Error("validatedBody missing");
+
+  const { id } = req.validatedParams as { id: SerialId };
+  const clientData = req.validatedBody as ClientData;
   const serviceResponse: ServiceResponse<undefined> = await updateClientService(
     id,
     clientData
   );
 
   if (!isServiceSuccess(serviceResponse)) {
-    return res.fail({
+    res.fail({
       status: serviceResponse.status,
       errors: serviceResponse.errors,
       message: serviceResponse.message,
     });
+    return;
   }
 
-  return res.status(serviceResponse.status).end();
+  res.status(serviceResponse.status).end();
 }
 
-export async function createClient(req, res) {
-  const clientData: ClientData = req.validatedBody;
-  const serviceResponse: ServiceResponse<undefined> = await createClientService(
-    clientData
-  );
+export async function createClient(req: Request, res: Response) {
+  if (!req.validatedBody) throw new Error("validatedBody missing");
+
+  const clientData = req.validatedBody as ClientData;
+  const serviceResponse: ServiceResponse<undefined> =
+    await createClientService(clientData);
 
   if (!isServiceSuccess(serviceResponse)) {
-    return res.fail({
+    res.fail({
       status: serviceResponse.status,
       errors: serviceResponse.errors,
       message: serviceResponse.message,
     });
+    return;
   }
 
-  return res.status(serviceResponse.status).end();
+  res.status(serviceResponse.status).end();
 }
