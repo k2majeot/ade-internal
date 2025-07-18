@@ -12,35 +12,12 @@ const { title = "Adult Day Experiences", alwaysShrink = false } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.svg" />
-
-    <meta property="og:title" content="Adult Day Experiences" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.ico" />
     <meta
-      property="og:description"
-      content="A remarkable program for remarkable people!"
+      name="description"
+      content="Program details, contact info, and resources for Adult Day Experiences."
     />
-    <meta
-      property="og:image"
-      content="https://adexperiences.com/assets/img/ade-logo.png"
-    />
-    <meta property="og:url" content="https://adexperiences.com" />
-    <meta name="twitter:card" content="summary_large_image" />
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Adult Day Experiences",
-        "url": "https://adexperiences.com",
-        "logo": "https://adexperiences.com/assets/img/ade-logo.png"
-      }
-    </script>
-
-    <!-- Font Awesome -->
-    <script
-      src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
-      crossorigin="anonymous"></script>
 
     <!-- Google Fonts -->
     <link
@@ -51,6 +28,11 @@ const { title = "Adult Day Experiences", alwaysShrink = false } = Astro.props;
       href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700"
       rel="stylesheet"
     />
+
+    <!-- Font Awesome -->
+    <script
+      src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
+      crossorigin="anonymous"></script>
 
     <slot name="head" />
   </head>
