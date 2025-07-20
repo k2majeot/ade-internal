@@ -6,7 +6,6 @@ import type {
   CompleteChallenge,
   User,
   Username,
-  CompleteChallenge,
 } from "@shared/validation";
 import {
   credentialsSchema,
